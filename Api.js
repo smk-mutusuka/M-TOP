@@ -1,16 +1,11 @@
 /**
  * ============================================================
- * API.JS — Client JSON untuk GAS Web App
- * ============================================================
- * Ganti semua `google.script.run.fn(x, y)` menjadi:
- *   apiCall('fn', [x, y])
- * atau (kalau 1 parameter object):
- *   apiCall('fn', { ... })
+ * API.JS — Client GAS (pengganti google.script.run)
  * ============================================================
  */
 
-// ⚠️ GANTI dengan URL deployment GAS kamu
-const GAS_API_URL = 'https://script.google.com/macros/s/XXXXXXXX/exec';
+// ⚠️ WAJIB GANTI dengan URL deployment GAS kamu
+const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbynlrTK1-hqtmJlhA4oYbz2Ns4V6wOvZOPhTh-646YpijBJ4oEvtc0btuUaMU0zbVbBWQ/exec';
 
 const TOKEN_KEY = 'mtop_token';
 const USER_KEY  = 'mtop_user';
@@ -41,7 +36,7 @@ function setUser(u) {
 }
 
 // ============================================
-// CORE CALLER
+// CORE API CALL
 // ============================================
 async function apiCall(action, params) {
   const body = {
@@ -54,7 +49,7 @@ async function apiCall(action, params) {
   try {
     resp = await fetch(GAS_API_URL, {
       method: 'POST',
-      // text/plain → no CORS preflight (GAS tidak handle OPTIONS)
+      // text/plain → tidak trigger CORS preflight
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(body),
       redirect: 'follow'
@@ -74,12 +69,9 @@ async function apiCall(action, params) {
     throw new Error('Response bukan JSON. Cek deployment GAS.');
   }
 
-  // Auto-logout kalau token expired
   if (json && json.code === 'AUTH_REQUIRED') {
     clearSession();
-    if (typeof window.__onSessionExpired === 'function') {
-      window.__onSessionExpired();
-    }
+    if (typeof window.__onSessionExpired === 'function') window.__onSessionExpired();
     throw new Error(json.message || 'Sesi habis.');
   }
 
@@ -87,82 +79,52 @@ async function apiCall(action, params) {
 }
 
 // ============================================
-// WRAPPER — bentuknya menyerupai google.script.run
-// (supaya kode lama frontend bisa migrasi bertahap)
+// SHIM: google.script.run PALSU
+// (agar kode lama tetap jalan tanpa diubah)
 // ============================================
-function gsRun(action, ...args) {
-  // params: kalau argumen = 0/1 objek → object, kalau banyak → array
-  let params;
-  if (args.length === 0) params = {};
-  else if (args.length === 1 && typeof args[0] === 'object' && args[0] !== null) params = args[0];
-  else params = args;
+window.google = window.google || {};
+window.google.script = window.google.script || {};
 
-  return {
-    withSuccessHandler(cb) {
-      this.__success = cb;
-      return this;
-    },
-    withFailureHandler(cb) {
-      this.__fail = cb;
-      return this;
-    },
-    then(resolve, reject) {
-      return apiCall(action, params).then(resolve, reject);
-    },
-    // Setter untuk chaining
-    __success: null,
-    __fail: null,
-    // Kick off setelah semua handler ter-set
-    __exec() {
-      const p = apiCall(action, params);
-      p.then(
-        (res) => {
-          if (this.__success) {
-            // google.script.run mengirim STRING JSON → kita konversi
-            this.__success(typeof res === 'string' ? res : JSON.stringify(res));
-          }
-        },
-        (err) => {
-          if (this.__fail) this.__fail(err);
-          else console.error(err);
-        }
-      );
-    }
-  };
-}
-
-// Override pemanggilan: kita butuh "proxy" agar `gsRun('fn', a, b)` bekerja
-// dengan chaining .withSuccessHandler().withFailureHandler().
-// Karena chaining harus dipanggil SEBELUM eksekusi, kita bikin lazy.
-function gs(action, ...args) {
+window.google.script.run = (function() {
   let successCb = null;
   let failCb = null;
 
-  let params;
-  if (args.length === 0) params = {};
-  else if (args.length === 1 && typeof args[0] === 'object' && args[0] !== null) params = args[0];
-  else params = args;
-
-  const runner = {
-    withSuccessHandler(cb) { successCb = cb; return runner; },
-    withFailureHandler(cb) { failCb = cb; return runner; },
-    then(resolve, reject) {
-      return apiCall(action, params).then(
-        (res) => {
-          const str = (typeof res === 'string') ? res : JSON.stringify(res);
-          if (successCb) successCb(str);
-          if (resolve) resolve(res);
-        },
-        (err) => {
-          if (failCb) failCb(err);
-          if (reject) reject(err);
-        }
-      );
-    }
+  const base = {
+    withSuccessHandler: function(cb) { successCb = cb; return proxy; },
+    withFailureHandler: function(cb) { failCb = cb; return proxy; }
   };
 
-  // Eksekusi otomatis pada tick berikutnya (meniru chaining google.script.run)
-  Promise.resolve().then(() => runner.then());
+  const proxy = new Proxy(base, {
+    get: function(target, prop) {
+      if (prop in target) return target[prop];
+      if (typeof prop !== 'string') return undefined;
 
-  return runner;
-}
+      // prop = nama action
+      return function() {
+        const args = Array.prototype.slice.call(arguments);
+        let params;
+        if (args.length === 0) params = {};
+        else if (args.length === 1 && typeof args[0] === 'object' && args[0] !== null) params = args[0];
+        else params = args;
+
+        // Snapshot lalu reset (biar tidak bocor ke call berikutnya)
+        const ls = successCb;
+        const lf = failCb;
+        successCb = null;
+        failCb = null;
+
+        apiCall(prop, params).then(
+          function(res) {
+            if (ls) ls(typeof res === 'string' ? res : JSON.stringify(res));
+          },
+          function(err) {
+            if (lf) lf(err);
+            else console.error('API error [' + prop + ']:', err);
+          }
+        );
+      };
+    }
+  });
+
+  return proxy;
+})();
