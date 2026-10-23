@@ -3226,3 +3226,36 @@ function aksiPersetujuan(woId, status) {
 function lihatDetailPelanggan(woId) {
   showToast('Fitur detail sedang disiapkan. Cek status berkala.', 'info');
 }
+// ==========================================
+// 23. INIT (ANTI GAGAL)
+// ==========================================
+window.addEventListener('DOMContentLoaded', async function() {
+  // 1. Pastikan layar login selalu muncul pertama kali
+  showLoginScreen();
+
+  const token = getToken();
+  if (!token) return; // Kalau belum login, berhenti di sini (layar login sudah tampil)
+
+  // 2. Kalau ada token tersimpan, coba cek session ke GAS
+  try {
+    // Beri batas waktu 10 detik agar tidak loading terus (blank)
+    const timeout = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Koneksi ke server timeout')), 10000)
+    );
+    
+    const res = await Promise.race([
+      apiCall('cekSession', {}),
+      timeout
+    ]);
+
+    if (res.success) {
+      setUser(res.data);
+      showMainApp(res.data); // Sembunyikan login, tampilkan aplikasi
+    } else {
+      clearSession(); // Token expired, biarkan di layar login
+    }
+  } catch (e) {
+    console.error('Cek session gagal:', e.message);
+    clearSession(); // Hapus token jika error, biarkan di layar login
+  }
+});
