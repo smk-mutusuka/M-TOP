@@ -63,23 +63,3 @@
     </table>
   </div>
 </div>
-
-<script>
-  // Load daftar pelanggan untuk dropdown saat view ini dibuka
-  (function() {
-    google.script.run
-      .withSuccessHandler(function(responseStr) {
-        const res = JSON.parse(responseStr);
-        if (res.success) {
-          const select = document.getElementById('k_pelanggan_id');
-          if (!select) return;
-          let html = '<option value="">-- Pilih --</option>';
-          res.data.forEach(function(p) {
-            html += '<option value="' + p.pelanggan_id + '">' + p.nama + ' (' + p.whatsapp + ')</option>';
-          });
-          select.innerHTML = html;
-        }
-      })
-      .getDaftarPelanggan(false);
-  })();
-</script>
