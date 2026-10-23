@@ -26,11 +26,9 @@
         </div>
 
         <!-- Tab Pilihan Role -->
-        <div style="display:flex; gap:8px; margin-bottom:20px;">
-          <button type="button" class="role-btn active" onclick="switchLoginRole('admin', this)" style="flex:1; padding:10px; border-radius:6px; border:1px solid #1769AA; background:#1769AA; color:white; cursor:pointer; font-weight:600;">Admin</button>
-          <button type="button" class="role-btn" onclick="switchLoginRole('mekanik', this)" style="flex:1; padding:10px; border-radius:6px; border:1px solid #ddd; background:white; color:#333; cursor:pointer; font-weight:600;">Mekanik</button>
-          <button type="button" class="role-btn" onclick="switchLoginRole('pelanggan', this)" style="flex:1; padding:10px; border-radius:6px; border:1px solid #ddd; background:white; color:#333; cursor:pointer; font-weight:600;">Pelanggan</button>
-        </div>
+        <button type="button" class="role-btn active" onclick="switchLoginRole('admin', this)" style="flex:1; padding:10px; border-radius:6px; border:1px solid #1769AA; background:#1769AA; color:white; cursor:pointer; font-weight:600; text-align:center;">Admin</button>
+<button type="button" class="role-btn" onclick="switchLoginRole('mekanik', this)" style="flex:1; padding:10px; border-radius:6px; border:1px solid #ddd; background:white; color:#333; cursor:pointer; font-weight:600; text-align:center;">Mekanik</button>
+<button type="button" class="role-btn" onclick="switchLoginRole('pelanggan', this)" style="flex:1; padding:10px; border-radius:6px; border:1px solid #ddd; background:white; color:#333; cursor:pointer; font-weight:600; text-align:center;">Pelanggan</button>
 
         <form id="formLogin" onsubmit="submitLogin(event)" autocomplete="off">
           <input type="hidden" id="login_role" value="admin">
