@@ -3023,19 +3023,21 @@ function switchLoginRole(role, btn) {
   btn.style.color = 'white';
   btn.style.borderColor = '#1769AA';
 
-  // Toggle field
+    // (Di dalam fungsi switchLoginRole)
   if (role === 'pelanggan') {
     document.getElementById('login_field_username').style.display = 'none';
     document.getElementById('login_field_password').style.display = 'none';
     document.getElementById('login_field_wa').style.display = 'block';
     document.getElementById('login_username').required = false;
     document.getElementById('login_password').required = false;
+    document.getElementById('area_daftar_pelanggan').style.display = 'block'; // TAMBAHKAN INI
   } else {
     document.getElementById('login_field_username').style.display = 'block';
     document.getElementById('login_field_password').style.display = 'block';
     document.getElementById('login_field_wa').style.display = 'none';
     document.getElementById('login_username').required = true;
     document.getElementById('login_password').required = true;
+    document.getElementById('area_daftar_pelanggan').style.display = 'none'; // TAMBAHKAN INI
   }
   document.getElementById('login_error').style.display = 'none';
 }
@@ -3290,4 +3292,68 @@ async function doLogout() {
       showToast('Anda telah berhasil logout.', 'success');
     }
   });
+}
+// ==========================================
+// 25. PENDAFTARAN MANDIRI PELANGGAN
+// ==========================================
+function bukaFormDaftarPelanggan() {
+  document.getElementById('formDaftarPelanggan').reset();
+  document.getElementById('d_error').style.display = 'none';
+  document.getElementById('modal-daftar-pelanggan').style.display = 'flex';
+}
+
+async function submitDaftarPelanggan(event) {
+  event.preventDefault();
+  const btn = document.getElementById('btnSubmitDaftar');
+  const errBox = document.getElementById('d_error');
+  errBox.style.display = 'none';
+
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+
+  // Siapkan data untuk fungsi backend prosesPenerimaanMotor
+  const formData = {
+    nama: document.getElementById('d_nama').value.trim(),
+    whatsapp: document.getElementById('d_wa').value.trim(),
+    alamat: '', // Bisa ditambahkan inputnya kalau mau
+    nopol: document.getElementById('d_nopol').value.toUpperCase().trim(),
+    kilometer: document.getElementById('d_km').value,
+    merek: document.getElementById('d_motor').value.trim(),
+    tipe: '',
+    keluhan: document.getElementById('d_keluhan').value.trim(),
+    catatan: 'Daftar mandiri via Portal Pelanggan'
+  };
+
+  const waDigits = formData.whatsapp.replace(/\D/g, '');
+  if (waDigits.length < 9 || waDigits.length > 15) {
+    errBox.innerText = 'Nomor WhatsApp harus 9-15 digit angka.';
+    errBox.style.display = 'block';
+    btn.disabled = false;
+    btn.innerHTML = 'Daftar & Masuk Antrean';
+    return;
+  }
+
+  try {
+    // 1. Daftarkan & Buat WO (Menggunakan fungsi backend yang sudah ada)
+    const resDaftar = await apiCall('prosesPenerimaanMotor', formData);
+    if (!resDaftar.success) throw new Error(resDaftar.message);
+
+    showToast('Pendaftaran berhasil! Mengarahkan ke portal...', 'success');
+    document.getElementById('modal-daftar-pelanggan').style.display = 'none';
+
+    // 2. Otomatis login-kan pelanggan tersebut
+    const resLogin = await apiCall('loginPelanggan', { whatsapp: formData.whatsapp });
+    if (!resLogin.success) throw new Error(resLogin.message);
+
+    // 3. Set session & masuk ke aplikasi
+    setToken(resLogin.data.token);
+    setUser(resLogin.data.user);
+    showMainApp(resLogin.data.user);
+
+  } catch (err) {
+    errBox.innerText = 'Gagal Mendaftar: ' + err.message;
+    errBox.style.display = 'block';
+    btn.disabled = false;
+    btn.innerHTML = 'Daftar & Masuk Antrean';
+  }
 }
