@@ -3010,7 +3010,6 @@ function kirimReminderDariDaftar(whatsapp, nama, nopol, hariTerakhir) {
 function switchLoginRole(role, btn) {
   document.getElementById('login_role').value = role;
   
-  // Reset style tombol
   document.querySelectorAll('.role-btn').forEach(el => {
     el.style.background = 'white';
     el.style.color = '#333';
@@ -3018,26 +3017,26 @@ function switchLoginRole(role, btn) {
     el.classList.remove('active');
   });
   
-  // Highlight tombol aktif
   btn.style.background = '#1769AA';
   btn.style.color = 'white';
   btn.style.borderColor = '#1769AA';
 
-    // (Di dalam fungsi switchLoginRole)
+  const areaDaftar = document.getElementById('area_daftar_pelanggan'); // Tambahan aman
+
   if (role === 'pelanggan') {
     document.getElementById('login_field_username').style.display = 'none';
     document.getElementById('login_field_password').style.display = 'none';
     document.getElementById('login_field_wa').style.display = 'block';
     document.getElementById('login_username').required = false;
     document.getElementById('login_password').required = false;
-    document.getElementById('area_daftar_pelanggan').style.display = 'block'; // TAMBAHKAN INI
+    if (areaDaftar) areaDaftar.style.display = 'block'; 
   } else {
     document.getElementById('login_field_username').style.display = 'block';
     document.getElementById('login_field_password').style.display = 'block';
     document.getElementById('login_field_wa').style.display = 'none';
     document.getElementById('login_username').required = true;
     document.getElementById('login_password').required = true;
-    document.getElementById('area_daftar_pelanggan').style.display = 'none'; // TAMBAHKAN INI
+    if (areaDaftar) areaDaftar.style.display = 'none';
   }
   document.getElementById('login_error').style.display = 'none';
 }
