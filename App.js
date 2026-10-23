@@ -3006,49 +3006,115 @@ function kirimReminderDariDaftar(whatsapp, nama, nopol, hariTerakhir) {
 }
 
 // ==========================================
-// 21. BOOTSTRAP LOGIN (BARU)
+// 21. BOOTSTRAP LOGIN & ROLE MANAGEMENT
 // ==========================================
+function switchLoginRole(role, btn) {
+  document.getElementById('login_role').value = role;
+  
+  // Reset style tombol
+  document.querySelectorAll('.role-btn').forEach(el => {
+    el.style.background = 'white';
+    el.style.color = '#333';
+    el.style.borderColor = '#ddd';
+    el.classList.remove('active');
+  });
+  
+  // Highlight tombol aktif
+  btn.style.background = '#1769AA';
+  btn.style.color = 'white';
+  btn.style.borderColor = '#1769AA';
+
+  // Toggle field
+  if (role === 'pelanggan') {
+    document.getElementById('login_field_username').style.display = 'none';
+    document.getElementById('login_field_password').style.display = 'none';
+    document.getElementById('login_field_wa').style.display = 'block';
+    document.getElementById('login_username').required = false;
+    document.getElementById('login_password').required = false;
+  } else {
+    document.getElementById('login_field_username').style.display = 'block';
+    document.getElementById('login_field_password').style.display = 'block';
+    document.getElementById('login_field_wa').style.display = 'none';
+    document.getElementById('login_username').required = true;
+    document.getElementById('login_password').required = true;
+  }
+  document.getElementById('login_error').style.display = 'none';
+}
+
 function showLoginScreen() {
   document.getElementById('login-screen').style.display = 'block';
   document.getElementById('main-app').style.display = 'none';
 }
 
+const ROLE_MENUS = {
+  admin: ['Dashboard', 'Penerimaan', 'DaftarWO', 'Kasir', 'Pelanggan', 'Kendaraan', 'KatalogJasa', 'Inventori', 'Mekanik', 'Sales', 'Pembelian', 'UtangSales', 'Laporan', 'Keuangan'],
+  mekanik: ['Dashboard', 'Penerimaan', 'DaftarWO', 'Pelanggan', 'Kendaraan'],
+  pelanggan: ['PortalPelanggan'] // View khusus pelanggan
+};
+
 function showMainApp(user) {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('main-app').style.display = 'flex';
+  
   const label = (user && user.nama) ? user.nama : 'User';
-  document.getElementById('user-info').innerText = label;
+  document.getElementById('user-info').innerText = label + ' (' + user.role + ')';
   document.getElementById('topbar-user').innerText = label;
-  loadView('Dashboard');
+
+  // Filter Sidebar berdasarkan Role
+  const allowedMenus = ROLE_MENUS[user.role] || ['Dashboard'];
+  
+  document.querySelectorAll('.nav-item').forEach(el => {
+    const view = el.getAttribute('data-view');
+    if (allowedMenus.includes(view)) {
+      el.style.display = 'flex';
+    } else {
+      el.style.display = 'none';
+    }
+  });
+
+  // Sembunyikan section title jika semua isinya hidden (optional)
+  if (user.role === 'pelanggan') {
+    document.querySelectorAll('.nav-section').forEach(el => el.style.display = 'none');
+    loadView('PortalPelanggan');
+  } else {
+    document.querySelectorAll('.nav-section').forEach(el => el.style.display = 'block');
+    loadView('Dashboard');
+  }
 }
 
 async function submitLogin(event) {
   event.preventDefault();
-  const username = document.getElementById('login_username').value.trim();
-  const password = document.getElementById('login_password').value;
+  const role = document.getElementById('login_role').value;
   const btn = document.getElementById('btnLogin');
   const errBox = document.getElementById('login_error');
   errBox.style.display = 'none';
-
-  if (!username || !password) {
-    errBox.innerText = 'Username dan password wajib diisi.';
-    errBox.style.display = 'block';
-    return;
-  }
 
   btn.disabled = true;
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
 
   try {
-    const res = await apiCall('loginUser', { username: username, password: password });
+    let res;
+    if (role === 'pelanggan') {
+      const wa = document.getElementById('login_whatsapp').value.trim();
+      if (!wa) throw new Error('Nomor WA wajib diisi.');
+      res = await apiCall('loginPelanggan', { whatsapp: wa });
+    } else {
+      const username = document.getElementById('login_username').value.trim();
+      const password = document.getElementById('login_password').value;
+      if (!username || !password) throw new Error('Username dan password wajib diisi.');
+      res = await apiCall('loginUser', { username, password });
+    }
+
     if (!res.success) {
       errBox.innerText = res.message;
       errBox.style.display = 'block';
       return;
     }
+    
     setToken(res.data.token);
     setUser(res.data.user);
     showMainApp(res.data.user);
+    
   } catch (err) {
     errBox.innerText = 'Error: ' + err.message;
     errBox.style.display = 'block';
@@ -3057,33 +3123,3 @@ async function submitLogin(event) {
     btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk';
   }
 }
-
-async function doLogout() {
-  try { await apiCall('logoutUser', { token: getToken() }); } catch (e) {}
-  clearSession();
-  showLoginScreen();
-}
-
-window.__onSessionExpired = function() {
-  showLoginScreen();
-  alert('Sesi habis, silakan login ulang.');
-};
-
-window.addEventListener('DOMContentLoaded', async function() {
-  const token = getToken();
-  if (!token) { showLoginScreen(); return; }
-
-  try {
-    const res = await apiCall('cekSession', {});
-    if (res.success) {
-      setUser(res.data);
-      showMainApp(res.data);
-    } else {
-      clearSession();
-      showLoginScreen();
-    }
-  } catch (e) {
-    clearSession();
-    showLoginScreen();
-  }
-});
