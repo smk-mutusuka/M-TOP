@@ -3010,6 +3010,7 @@ function kirimReminderDariDaftar(whatsapp, nama, nopol, hariTerakhir) {
 function switchLoginRole(role, btn) {
   document.getElementById('login_role').value = role;
   
+  // Reset style tombol
   document.querySelectorAll('.role-btn').forEach(el => {
     el.style.background = 'white';
     el.style.color = '#333';
@@ -3017,19 +3018,21 @@ function switchLoginRole(role, btn) {
     el.classList.remove('active');
   });
   
+  // Highlight tombol aktif
   btn.style.background = '#1769AA';
   btn.style.color = 'white';
   btn.style.borderColor = '#1769AA';
 
-  const areaDaftar = document.getElementById('area_daftar_pelanggan'); // Tambahan aman
+  const areaDaftar = document.getElementById('area_daftar_pelanggan');
 
+  // Toggle field
   if (role === 'pelanggan') {
     document.getElementById('login_field_username').style.display = 'none';
     document.getElementById('login_field_password').style.display = 'none';
     document.getElementById('login_field_wa').style.display = 'block';
     document.getElementById('login_username').required = false;
     document.getElementById('login_password').required = false;
-    if (areaDaftar) areaDaftar.style.display = 'block'; 
+    if (areaDaftar) areaDaftar.style.display = 'block';
   } else {
     document.getElementById('login_field_username').style.display = 'block';
     document.getElementById('login_field_password').style.display = 'block';
@@ -3049,7 +3052,7 @@ function showLoginScreen() {
 const ROLE_MENUS = {
   admin: ['Dashboard', 'Penerimaan', 'DaftarWO', 'Kasir', 'Pelanggan', 'Kendaraan', 'KatalogJasa', 'Inventori', 'Mekanik', 'Sales', 'Pembelian', 'UtangSales', 'Laporan', 'Keuangan'],
   mekanik: ['Dashboard', 'Penerimaan', 'DaftarWO', 'Pelanggan', 'Kendaraan'],
-  pelanggan: ['PortalPelanggan'] // View khusus pelanggan
+  pelanggan: ['PortalPelanggan']
 };
 
 function showMainApp(user) {
@@ -3072,7 +3075,7 @@ function showMainApp(user) {
     }
   });
 
-  // Sembunyikan section title jika semua isinya hidden (optional)
+  // Sembunyikan section title jika semua isinya hidden
   if (user.role === 'pelanggan') {
     document.querySelectorAll('.nav-section').forEach(el => el.style.display = 'none');
     loadView('PortalPelanggan');
@@ -3099,7 +3102,6 @@ async function submitLogin(event) {
       if (!wa) throw new Error('Nomor WA wajib diisi.');
       res = await apiCall('loginPelanggan', { whatsapp: wa });
     } else {
-      // Paksa ambil value langsung dari DOM (kebal autofill)
       const elUser = document.getElementById('login_username');
       const elPass = document.getElementById('login_password');
       
@@ -3114,7 +3116,6 @@ async function submitLogin(event) {
         return;
       }
       
-      // Kirim sebagai objek
       res = await apiCall('loginUser', { username: username, password: password });
     }
 
@@ -3138,7 +3139,7 @@ async function submitLogin(event) {
 }
 
 // ==========================================
-// 22. MODUL PORTAL PELANGGAN
+// 22. MODUL PORTAL PELANGGAN & PENDAFTARAN
 // ==========================================
 function initPortalPelanggan() {
   const tbody = document.getElementById('tabelPortalPelanggan');
@@ -3163,7 +3164,6 @@ function initPortalPelanggan() {
       res.data.forEach(function(wo) {
         let badgeColor = wo.status === 'Selesai' ? 'var(--primary-green)' : (wo.status === 'Menunggu Persetujuan' ? '#f39c12' : 'var(--primary-blue)');
         
-        // Tombol aksi
         let btnAksi = '<span style="color:#999; font-size:0.8rem;">-</span>';
         if (wo.status === 'Menunggu Persetujuan') {
           btnAksi = '<button onclick="bukaPersetujuan(\'' + wo.wo_id + '\')" style="background:var(--primary-green); color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-weight:bold;">Review Biaya</button>';
@@ -3239,9 +3239,87 @@ function lihatDetailPelanggan(woId) {
   showToast('Fitur detail sedang disiapkan. Cek status berkala.', 'info');
 }
 
+// --- PENDAFTARAN MANDIRI PELANGGAN ---
+function bukaFormDaftarPelanggan() {
+  document.getElementById('formDaftarPelanggan').reset();
+  document.getElementById('d_error').style.display = 'none';
+  document.getElementById('modal-daftar-pelanggan').style.display = 'flex';
+}
+
+async function submitDaftarPelanggan(event) {
+  event.preventDefault();
+  const btn = document.getElementById('btnSubmitDaftar');
+  const errBox = document.getElementById('d_error');
+  errBox.style.display = 'none';
+
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+
+  const formData = {
+    nama: document.getElementById('d_nama').value.trim(),
+    whatsapp: document.getElementById('d_wa').value.trim(),
+    alamat: '',
+    nopol: document.getElementById('d_nopol').value.toUpperCase().trim(),
+    kilometer: document.getElementById('d_km').value,
+    merek: document.getElementById('d_motor').value.trim(),
+    tipe: '',
+    keluhan: document.getElementById('d_keluhan').value.trim(),
+    catatan: 'Daftar mandiri via Portal Pelanggan'
+  };
+
+  const waDigits = formData.whatsapp.replace(/\D/g, '');
+  if (waDigits.length < 9 || waDigits.length > 15) {
+    errBox.innerText = 'Nomor WhatsApp harus 9-15 digit angka.';
+    errBox.style.display = 'block';
+    btn.disabled = false;
+    btn.innerHTML = 'Daftar & Masuk Antrean';
+    return;
+  }
+
+  try {
+    const resDaftar = await apiCall('prosesPenerimaanMotor', formData);
+    if (!resDaftar.success) throw new Error(resDaftar.message);
+
+    showToast('Pendaftaran berhasil! Mengarahkan ke portal...', 'success');
+    document.getElementById('modal-daftar-pelanggan').style.display = 'none';
+
+    const resLogin = await apiCall('loginPelanggan', { whatsapp: formData.whatsapp });
+    if (!resLogin.success) throw new Error(resLogin.message);
+
+    setToken(resLogin.data.token);
+    setUser(resLogin.data.user);
+    showMainApp(resLogin.data.user);
+
+  } catch (err) {
+    errBox.innerText = 'Gagal Mendaftar: ' + err.message;
+    errBox.style.display = 'block';
+    btn.disabled = false;
+    btn.innerHTML = 'Daftar & Masuk Antrean';
+  }
+}
+
 // ==========================================
-// 23. INIT (ANTI GAGAL)
+// 23. INIT & LOGOUT
 // ==========================================
+async function doLogout() {
+  showConfirm('Apakah Anda yakin ingin keluar dari aplikasi?', async function() {
+    try {
+      await apiCall('logoutUser', {});
+    } catch (e) {
+      console.log('Gagal menghapus session di server, lanjut logout lokal.');
+    } finally {
+      clearSession();
+      showLoginScreen();
+      
+      const formLogin = document.getElementById('formLogin');
+      if (formLogin) formLogin.reset();
+      document.getElementById('login_error').style.display = 'none';
+      
+      showToast('Anda telah berhasil logout.', 'success');
+    }
+  });
+}
+
 window.addEventListener('DOMContentLoaded', async function() {
   showLoginScreen();
 
@@ -3269,90 +3347,3 @@ window.addEventListener('DOMContentLoaded', async function() {
     clearSession(); 
   }
 });
-// ==========================================
-// 24. FUNGSI LOGOUT
-// ==========================================
-async function doLogout() {
-  showConfirm('Apakah Anda yakin ingin keluar dari aplikasi?', async function() {
-    try {
-      // 1. Coba hapus session di backend (GAS)
-      await apiCall('logoutUser', {});
-    } catch (e) {
-      console.log('Gagal menghapus session di server, lanjut logout lokal.');
-    } finally {
-      // 2. Hapus token di browser & sembunyikan aplikasi
-      clearSession(); // Fungsi ini ada di api.js
-      showLoginScreen(); // Fungsi ini ada di app.js
-      
-      // 3. Bersihkan form login biar ga nyangkut
-      const formLogin = document.getElementById('formLogin');
-      if (formLogin) formLogin.reset();
-      
-      showToast('Anda telah berhasil logout.', 'success');
-    }
-  });
-}
-// ==========================================
-// 25. PENDAFTARAN MANDIRI PELANGGAN
-// ==========================================
-function bukaFormDaftarPelanggan() {
-  document.getElementById('formDaftarPelanggan').reset();
-  document.getElementById('d_error').style.display = 'none';
-  document.getElementById('modal-daftar-pelanggan').style.display = 'flex';
-}
-
-async function submitDaftarPelanggan(event) {
-  event.preventDefault();
-  const btn = document.getElementById('btnSubmitDaftar');
-  const errBox = document.getElementById('d_error');
-  errBox.style.display = 'none';
-
-  btn.disabled = true;
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
-
-  // Siapkan data untuk fungsi backend prosesPenerimaanMotor
-  const formData = {
-    nama: document.getElementById('d_nama').value.trim(),
-    whatsapp: document.getElementById('d_wa').value.trim(),
-    alamat: '', // Bisa ditambahkan inputnya kalau mau
-    nopol: document.getElementById('d_nopol').value.toUpperCase().trim(),
-    kilometer: document.getElementById('d_km').value,
-    merek: document.getElementById('d_motor').value.trim(),
-    tipe: '',
-    keluhan: document.getElementById('d_keluhan').value.trim(),
-    catatan: 'Daftar mandiri via Portal Pelanggan'
-  };
-
-  const waDigits = formData.whatsapp.replace(/\D/g, '');
-  if (waDigits.length < 9 || waDigits.length > 15) {
-    errBox.innerText = 'Nomor WhatsApp harus 9-15 digit angka.';
-    errBox.style.display = 'block';
-    btn.disabled = false;
-    btn.innerHTML = 'Daftar & Masuk Antrean';
-    return;
-  }
-
-  try {
-    // 1. Daftarkan & Buat WO (Menggunakan fungsi backend yang sudah ada)
-    const resDaftar = await apiCall('prosesPenerimaanMotor', formData);
-    if (!resDaftar.success) throw new Error(resDaftar.message);
-
-    showToast('Pendaftaran berhasil! Mengarahkan ke portal...', 'success');
-    document.getElementById('modal-daftar-pelanggan').style.display = 'none';
-
-    // 2. Otomatis login-kan pelanggan tersebut
-    const resLogin = await apiCall('loginPelanggan', { whatsapp: formData.whatsapp });
-    if (!resLogin.success) throw new Error(resLogin.message);
-
-    // 3. Set session & masuk ke aplikasi
-    setToken(resLogin.data.token);
-    setUser(resLogin.data.user);
-    showMainApp(resLogin.data.user);
-
-  } catch (err) {
-    errBox.innerText = 'Gagal Mendaftar: ' + err.message;
-    errBox.style.display = 'block';
-    btn.disabled = false;
-    btn.innerHTML = 'Daftar & Masuk Antrean';
-  }
-}
