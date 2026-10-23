@@ -1,0 +1,92 @@
+<div class="card">
+  <div class="flex-between mb-20" style="border-bottom:2px solid var(--border-color); padding-bottom:10px;">
+    <h2 style="color:var(--primary-blue);"><i class="fas fa-file-alt"></i> Laporan</h2>
+  </div>
+
+  <!-- Filter -->
+  <div style="background:#f9f9f9; padding:15px; border-radius:8px; border:1px solid var(--border-color); margin-bottom:20px;">
+    <div style="display:grid; grid-template-columns: 2fr 1fr 1fr 120px; gap:10px; align-items:end;">
+      <div>
+        <label style="font-size:0.85rem; font-weight:bold;">Jenis Laporan</label>
+        <select id="lap_jenis" autocomplete="off" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+          <optgroup label="Operasional Servis">
+            <option value="servis">Laporan Servis (Semua WO)</option>
+            <option value="wo_status">Laporan WO per Status</option>
+            <option value="kinerja_mekanik">Laporan Kinerja Pelaksana</option>
+            <option value="aktivitas_siswa">Laporan Aktivitas Siswa (Teaching Factory)</option>
+          </optgroup>
+          <optgroup label="Keuangan">
+            <option value="pendapatan">Laporan Pendapatan</option>
+            <option value="pembayaran">Laporan Pembayaran</option>
+            <option value="piutang">Laporan Piutang</option>
+            <option value="pengeluaran">Laporan Pengeluaran</option>
+            <option value="pembelian">Laporan Pembelian</option>
+            <option value="laba_rugi">Laporan Laba Rugi</option>
+          </optgroup>
+          <optgroup label="Inventori">
+            <option value="stok">Laporan Stok</option>
+            <option value="mutasi">Laporan Mutasi Barang</option>
+          </optgroup>
+          <optgroup label="Pelanggan">
+            <option value="kepuasan">Laporan Kepuasan Pelanggan</option>
+            <option value="follow_up">Pelanggan Perlu Dihubungi Kembali</option>
+          </optgroup>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:0.85rem; font-weight:bold;">Dari Tanggal</label>
+        <input type="date" id="lap_dari" autocomplete="off" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+      </div>
+      <div>
+        <label style="font-size:0.85rem; font-weight:bold;">Sampai Tanggal</label>
+        <input type="date" id="lap_sampai" autocomplete="off" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+      </div>
+      <div>
+        <button onclick="tampilkanLaporan()" class="btn-primary" style="width:100%;">
+          <i class="fas fa-search"></i> Tampilkan
+        </button>
+      </div>
+    </div>
+
+    <!-- Quick period -->
+    <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+      <button onclick="setPeriodeLaporan('hari_ini')" class="btn-ghost" style="padding:5px 12px; font-size:0.8rem;">Hari Ini</button>
+      <button onclick="setPeriodeLaporan('minggu_ini')" class="btn-ghost" style="padding:5px 12px; font-size:0.8rem;">Minggu Ini</button>
+      <button onclick="setPeriodeLaporan('bulan_ini')" class="btn-ghost" style="padding:5px 12px; font-size:0.8rem;">Bulan Ini</button>
+      <button onclick="setPeriodeLaporan('bulan_lalu')" class="btn-ghost" style="padding:5px 12px; font-size:0.8rem;">Bulan Lalu</button>
+      <button onclick="setPeriodeLaporan('tahun_ini')" class="btn-ghost" style="padding:5px 12px; font-size:0.8rem;">Tahun Ini</button>
+    </div>
+  </div>
+
+  <!-- Action Bar (muncul setelah Tampilkan) -->
+  <div id="lap_action_bar" style="display:none; margin-bottom:16px; gap:8px; flex-wrap:wrap;">
+    <button onclick="exportCSV()" class="btn-success" style="padding:8px 14px;">
+      <i class="fas fa-file-csv"></i> Export CSV
+    </button>
+    <button onclick="exportPDF()" class="btn-danger" style="padding:8px 14px;">
+      <i class="fas fa-file-pdf"></i> Export PDF
+    </button>
+    <button onclick="toggleGrafik()" class="btn-ghost" style="padding:8px 14px;">
+      <i class="fas fa-chart-bar"></i> <span id="lap_toggle_text">Tampilkan Grafik</span>
+    </button>
+  </div>
+
+  <!-- Container Grafik (SVG manual, tanpa Chart.js) -->
+  <div id="lap_grafik_container" style="display:none; margin-bottom:20px;">
+    <div style="background:#f9f9f9; padding:15px; border-radius:8px; border:1px solid var(--border-color);">
+      <h3 style="margin-top:0; color:var(--primary-blue);"><i class="fas fa-chart-pie"></i> Grafik Visual</h3>
+      <div id="lap_grafik_content"></div>
+    </div>
+  </div>
+
+  <!-- Area Hasil -->
+  <div id="lap_hasil">
+    <div style="text-align:center; padding:40px; color:#999;">
+      <i class="fas fa-chart-line" style="font-size:3rem; color:#ddd;"></i>
+      <p style="margin-top:15px;">Pilih jenis laporan dan periode, lalu klik <strong>Tampilkan</strong>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Iframe hidden untuk print PDF -->
+<iframe id="lap_print_iframe" style="display:none; width:0; height:0; border:0;"></iframe>

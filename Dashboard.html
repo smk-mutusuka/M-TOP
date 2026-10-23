@@ -1,0 +1,118 @@
+<div class="dashboard-wrapper">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
+    <h2 style="color: var(--primary-blue);">Dashboard Operasional</h2>
+
+    <select id="filterDashboard" onchange="initDashboard()" style="padding:8px 15px; border:2px solid var(--primary-blue); border-radius:4px; outline:none; font-weight:bold; color:var(--primary-blue); cursor:pointer;">
+      <option value="hari_ini">Hari Ini</option>
+      <option value="minggu_ini">Minggu Ini</option>
+      <option value="bulan_ini">Bulan Ini</option>
+      <option value="semua">Semua Waktu</option>
+    </select>
+  </div>
+
+  <!-- ============ BARIS 1: OPERASIONAL ============ -->
+  <h4 style="color:var(--text-dark); margin-bottom:12px; font-size:0.95rem; text-transform:uppercase; letter-spacing:1px;">
+    <i class="fas fa-motorcycle"></i> Operasional Servis
+  </h4>
+  <div class="grid-dashboard" style="margin-bottom:20px;">
+    <div class="stat-card">
+      <div>
+        <p>Motor Masuk <span class="lbl-filter">Hari Ini</span></p>
+        <h3 id="stat-masuk"><i class="fas fa-spinner fa-spin"></i></h3>
+      </div>
+      <i class="fas fa-motorcycle icon"></i>
+    </div>
+
+    <div class="stat-card">
+      <div>
+        <p>Sedang Dikerjakan</p>
+        <h3 id="stat-proses"><i class="fas fa-spinner fa-spin"></i></h3>
+      </div>
+      <i class="fas fa-tools icon" style="color: var(--primary-blue);"></i>
+    </div>
+
+    <div class="stat-card">
+      <div>
+        <p>Selesai / Siap Diambil</p>
+        <h3 id="stat-selesai"><i class="fas fa-spinner fa-spin"></i></h3>
+      </div>
+      <i class="fas fa-check-circle icon" style="color: var(--primary-green);"></i>
+    </div>
+  </div>
+
+  <!-- ============ BARIS 2: KEUANGAN ============ -->
+  <h4 style="color:var(--text-dark); margin-bottom:12px; font-size:0.95rem; text-transform:uppercase; letter-spacing:1px;">
+    <i class="fas fa-chart-line"></i> Keuangan <span class="lbl-filter" style="text-transform:none;"></span>
+  </h4>
+  <div class="grid-dashboard" style="margin-bottom:20px;">
+    <div class="stat-card">
+      <div>
+        <p>Pendapatan</p>
+        <h3 id="stat-pendapatan" style="color: var(--primary-green);"><i class="fas fa-spinner fa-spin"></i></h3>
+      </div>
+      <i class="fas fa-wallet icon" style="color: var(--primary-green);"></i>
+    </div>
+
+    <div class="stat-card">
+      <div>
+        <p>HPP <small style="color:#999; font-size:0.7rem;">(Harga Pokok)</small></p>
+        <h3 id="stat-hpp" style="color: #f39c12;"><i class="fas fa-spinner fa-spin"></i></h3>
+      </div>
+      <i class="fas fa-boxes icon" style="color: #f39c12;"></i>
+    </div>
+
+    <div class="stat-card">
+      <div>
+        <p>Laba Kotor</p>
+        <h3 id="stat-laba-kotor" style="color: var(--primary-blue);"><i class="fas fa-spinner fa-spin"></i></h3>
+      </div>
+      <i class="fas fa-coins icon" style="color: var(--primary-blue);"></i>
+    </div>
+
+    <div class="stat-card">
+      <div>
+        <p>Pengeluaran Ops</p>
+        <h3 id="stat-pengeluaran" style="color: var(--primary-red);"><i class="fas fa-spinner fa-spin"></i></h3>
+      </div>
+      <i class="fas fa-arrow-up icon" style="color: var(--primary-red);"></i>
+    </div>
+
+    <div class="stat-card">
+      <div>
+        <p>Laba Operasional</p>
+        <h3 id="stat-laba" style="color: var(--primary-blue);"><i class="fas fa-spinner fa-spin"></i></h3>
+      </div>
+      <i class="fas fa-chart-line icon" style="color: var(--primary-blue);"></i>
+    </div>
+
+    <div class="stat-card" style="border-left:4px solid #f39c12;">
+      <div>
+        <p>Utang ke Sales <small style="color:#999; font-size:0.7rem;">(total)</small></p>
+        <h3 id="stat-utang-sales" style="color: #f39c12;"><i class="fas fa-spinner fa-spin"></i></h3>
+      </div>
+      <i class="fas fa-hand-holding-usd icon" style="color: #f39c12;"></i>
+    </div>
+  </div>
+
+  <!-- ============ AKTIVITAS ============ -->
+  <div class="card" style="margin-top: 20px;">
+    <h4 style="margin-bottom: 15px; border-bottom: 1px solid #EEE; padding-bottom: 10px;">
+      <i class="fas fa-history"></i> Aktivitas Servis Terbaru
+    </h4>
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; text-align: left; border-collapse: collapse;">
+        <thead>
+          <tr style="background-color: #F8F9FA; border-bottom: 2px solid var(--border-color);">
+            <th style="padding: 10px;">Nomor WO</th>
+            <th style="padding: 10px;">Nopol</th>
+            <th style="padding: 10px;">Status</th>
+            <th style="padding: 10px;">Petugas / Mekanik</th>
+          </tr>
+        </thead>
+        <tbody id="table-aktivitas">
+          <tr><td colspan="4" style="text-align:center; padding:20px; color:#999;"><i class="fas fa-spinner fa-spin"></i> Memuat data...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,62 @@
+<div class="card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">
+    <h2 style="color: var(--primary-blue);"><i class="fas fa-list"></i> Katalog Jasa & Tarif</h2>
+  </div>
+
+  <!-- Form Tambah Jasa -->
+  <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 20px;">
+    <h4 style="margin-bottom: 10px;">Tambah Jasa Baru</h4>
+    <form id="formJasa" onsubmit="submitJasa(event)" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end;">
+      <input type="hidden" name="jasa_id" id="jasa_id" value="">
+      <div style="flex: 1; min-width: 100px;">
+        <label style="font-size: 0.8rem; font-weight: bold;">Kode</label>
+        <input type="text" name="kode" required placeholder="SVC-01" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+      </div>
+      <div style="flex: 2; min-width: 150px;">
+        <label style="font-size: 0.8rem; font-weight: bold;">Nama Layanan</label>
+        <input type="text" name="nama" required placeholder="Servis Ringan Matic" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+      </div>
+      <div style="flex: 1; min-width: 120px;">
+        <label style="font-size: 0.8rem; font-weight: bold;">Kategori</label>
+        <select name="kategori" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+          <option value="Servis Ringan">Servis Ringan</option>
+          <option value="Ganti Oli">Ganti Oli</option>
+          <option value="Servis CVT">Servis CVT</option>
+          <option value="Lainnya">Lainnya</option>
+        </select>
+      </div>
+      <div style="flex: 1; min-width: 120px;">
+        <label style="font-size: 0.8rem; font-weight: bold;">Tarif (Rp)</label>
+        <input type="number" name="tarif" required placeholder="50000" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+      </div>
+      <div style="flex: 1; min-width: 100px;">
+        <label style="font-size: 0.8rem; font-weight: bold;">Estimasi (Menit)</label>
+        <input type="number" name="estimasi" required placeholder="30" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+      </div>
+      <div>
+        <button type="submit" id="btnSubmitJasa" style="background-color: var(--primary-green); color: white; border: none; padding: 9px 15px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+          <i class="fas fa-plus"></i> Simpan
+        </button>
+      </div>
+    </form>
+  </div>
+  
+  <!-- Tabel Jasa -->
+  <div style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+      <thead>
+        <tr style="background-color: var(--bg-light); border-bottom: 2px solid var(--border-color);">
+          <th style="padding: 10px;">Kode</th>
+          <th style="padding: 10px;">Layanan</th>
+          <th style="padding: 10px;">Kategori</th>
+          <th style="padding: 10px;">Tarif</th>
+          <th style="padding: 10px;">Estimasi</th>
+          <th style="padding: 10px;">Status & Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="tabelJasa">
+        <tr><td colspan="6" style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>

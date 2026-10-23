@@ -1,0 +1,49 @@
+<div class="card">
+  <div class="flex-between mb-20" style="border-bottom:2px solid var(--border-color); padding-bottom:10px;">
+    <h2 style="color: var(--primary-blue);"><i class="fas fa-user-tie"></i> Master Sales</h2>
+  </div>
+
+  <div style="background:#f9f9f9; padding:15px; border-radius:8px; border:1px solid var(--border-color); margin-bottom:20px;">
+    <h4 style="margin-bottom:10px;">Tambah / Edit Sales</h4>
+    <form id="formSales" onsubmit="submitSales(event)" style="display:grid; grid-template-columns:2fr 1.5fr 2fr 100px; gap:10px; align-items:end;">
+      <input type="hidden" name="sales_id" value="">
+
+      <div>
+        <label style="font-size:0.8rem; font-weight:bold;">Nama *</label>
+        <input type="text" name="nama" required placeholder="Toko Oli Jaya" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+      </div>
+      <div>
+        <label style="font-size:0.8rem; font-weight:bold;">Kontak</label>
+        <input type="tel" name="kontak" placeholder="08123456789" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+      </div>
+      <div>
+        <label style="font-size:0.8rem; font-weight:bold;">Alamat</label>
+        <input type="text" name="alamat" placeholder="Jl. ..." style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+      </div>
+      <div>
+        <button type="submit" id="btnSubmitSales" class="btn-success" style="width:100%;">
+          <i class="fas fa-plus"></i> Simpan
+        </button>
+      </div>
+      <input type="hidden" name="catatan" value="">
+    </form>
+  </div>
+
+  <div style="overflow-x:auto;">
+    <table style="width:100%; border-collapse:collapse; text-align:left;">
+      <thead>
+        <tr style="background-color:var(--bg-light); border-bottom:2px solid var(--border-color);">
+          <th style="padding:10px;">ID</th>
+          <th style="padding:10px;">Nama</th>
+          <th style="padding:10px;">Kontak</th>
+          <th style="padding:10px;">Alamat</th>
+          <th style="padding:10px;">Status</th>
+          <th style="padding:10px; text-align:center;">Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="tabelSales">
+        <tr><td colspan="6" style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>

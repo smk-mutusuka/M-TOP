@@ -1,0 +1,104 @@
+<div class="card">
+  <div class="flex-between mb-20" style="border-bottom:2px solid var(--border-color); padding-bottom:10px;">
+    <h2 style="color: var(--primary-blue);"><i class="fas fa-boxes"></i> Inventori Suku Cadang</h2>
+  </div>
+
+  <!-- Form Tambah Barang -->
+  <div style="background:#f9f9f9; padding:15px; border-radius:8px; border:1px solid var(--border-color); margin-bottom:20px;">
+    <h4 style="margin-bottom:15px;"><i class="fas fa-plus-circle"></i> Tambah Suku Cadang Baru</h4>
+
+    <form id="formBarang" onsubmit="submitBarang(event)">
+      <input type="hidden" name="barang_id" value="">
+
+      <!-- Baris 1: Kode, Nama, Kategori, Satuan -->
+      <div style="display:grid; grid-template-columns:120px 2fr 1fr 100px; gap:10px; margin-bottom:10px;">
+        <div>
+          <label style="font-size:0.8rem; font-weight:bold;">Kode SKU *</label>
+          <input type="text" name="kode" required placeholder="OLI-001" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; text-transform:uppercase;">
+        </div>
+        <div>
+          <label style="font-size:0.8rem; font-weight:bold;">Nama Barang *</label>
+          <input type="text" name="nama" required placeholder="Enduro Matic 0.8L" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+        </div>
+        <div>
+          <label style="font-size:0.8rem; font-weight:bold;">Kategori *</label>
+          <select name="kategori" required style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+            <option value="Oli">Oli</option>
+            <option value="Kampas Rem">Kampas Rem</option>
+            <option value="Busi">Busi</option>
+            <option value="Ban">Ban</option>
+            <option value="Filter">Filter</option>
+            <option value="CVT">CVT & Roller</option>
+            <option value="Kelistrikan">Kelistrikan</option>
+            <option value="Aki">Aki</option>
+            <option value="Lainnya">Lainnya</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:0.8rem; font-weight:bold;">Satuan *</label>
+          <input type="text" name="satuan" required placeholder="Pcs/Btl" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+        </div>
+      </div>
+
+      <!-- Baris 2: Harga Beli, Harga Jual, Stok Awal, Stok Min, Margin -->
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr 1fr; gap:10px; margin-bottom:10px;">
+        <div>
+          <label style="font-size:0.8rem; font-weight:bold;">Harga Beli (Rp) *</label>
+          <input type="number" name="harga_beli" id="inv_harga_beli" required min="0" placeholder="45000"
+                 oninput="hitungMarginBarang()"
+                 style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+        </div>
+        <div>
+          <label style="font-size:0.8rem; font-weight:bold;">Harga Jual (Rp) *</label>
+          <input type="number" name="harga_jual" id="inv_harga_jual" required min="0" placeholder="60000"
+                 oninput="hitungMarginBarang()"
+                 style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+        </div>
+        <div>
+          <label style="font-size:0.8rem; font-weight:bold;">Stok Awal *</label>
+          <input type="number" name="stok" required min="0" placeholder="10" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+        </div>
+        <div>
+          <label style="font-size:0.8rem; font-weight:bold;">Stok Minimum</label>
+          <input type="number" name="stok_minimum" min="0" value="5" placeholder="5" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+        </div>
+        <div>
+          <label style="font-size:0.8rem; font-weight:bold;">Margin</label>
+          <div id="inv_margin" style="padding:8px; background:#F3F5F7; border:1px solid #ccc; border-radius:4px; font-weight:bold; color:#39A935; text-align:center;">
+            -
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align:right;">
+        <button type="button" onclick="resetFormBarang()" class="btn-ghost" style="margin-right:8px;">
+          <i class="fas fa-times"></i> Reset
+        </button>
+        <button type="submit" id="btnSubmitBarang" class="btn-success">
+          <i class="fas fa-plus"></i> Simpan Barang
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Tabel Barang -->
+  <div style="overflow-x:auto;">
+    <table style="width:100%; border-collapse:collapse; text-align:left;">
+      <thead>
+        <tr style="background-color:var(--bg-light); border-bottom:2px solid var(--border-color);">
+          <th style="padding:10px;">Kode</th>
+          <th style="padding:10px;">Nama Barang</th>
+          <th style="padding:10px;">Kategori</th>
+          <th style="padding:10px;">Kepemilikan</th>
+          <th style="padding:10px; text-align:center;">Stok</th>
+          <th style="padding:10px; text-align:right;">Harga Beli</th>
+          <th style="padding:10px; text-align:right;">Harga Jual</th>
+          <th style="padding:10px; text-align:center;">Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="tabelBarang">
+        <tr><td colspan="8" style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>

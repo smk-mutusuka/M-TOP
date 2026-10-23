@@ -1,0 +1,84 @@
+<div class="card">
+  <div class="flex-between mb-20" style="border-bottom:2px solid var(--border-color); padding-bottom:10px;">
+    <h2 style="color: var(--primary-blue);"><i class="fas fa-shopping-cart"></i> Pembelian & Penerimaan Titipan</h2>
+    <button onclick="bukaFormPembelian()" class="btn-primary">
+      <i class="fas fa-plus"></i> Pembelian Baru
+    </button>
+  </div>
+
+  <!-- Form Pembelian (tersembunyi default) -->
+  <div id="panelFormPembelian" style="display:none; background:#f9f9f9; padding:15px; border-radius:8px; border:1px solid var(--border-color); margin-bottom:20px;">
+    <h4 style="margin-bottom:10px;"><i class="fas fa-file-invoice"></i> Form Pembelian Baru</h4>
+
+    <form id="formPembelian" onsubmit="submitPembelian(event)">
+      <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-bottom:15px;">
+        <div>
+          <label style="font-size:0.85rem; font-weight:bold;">Tipe Pembelian *</label>
+          <select name="tipe" id="p_tipe" onchange="onTipePembelianChange()" required style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+            <option value="">-- Pilih --</option>
+            <option value="Modal Sendiri">Modal Sendiri (Bayar Tunai/Transfer)</option>
+            <option value="Titipan">Titipan Sales (Bayar Nanti)</option>
+          </select>
+        </div>
+
+        <div id="p_sales_wrap" style="display:none;">
+          <label style="font-size:0.85rem; font-weight:bold;">Sales *</label>
+          <select name="sales_id" id="p_sales_id" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+            <option value="">-- Pilih Sales --</option>
+          </select>
+        </div>
+
+        <div id="p_pemasok_wrap" style="display:none;">
+          <label style="font-size:0.85rem; font-weight:bold;">Pemasok / Toko</label>
+          <input type="text" name="pemasok" id="p_pemasok" placeholder="Nama toko" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+        </div>
+
+        <div>
+          <label style="font-size:0.85rem; font-weight:bold;">Catatan</label>
+          <input type="text" name="catatan" placeholder="-" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+        </div>
+      </div>
+
+      <div style="background:white; padding:12px; border-radius:6px; border:1px solid var(--border-color); margin-bottom:15px;">
+        <h5 style="margin-bottom:10px;"><i class="fas fa-boxes"></i> Item Barang</h5>
+
+        <div id="p_item_list"></div>
+
+        <button type="button" onclick="tambahBarisItem()" style="background:var(--primary-blue); color:white; margin-top:10px; border:none; padding:8px 14px; border-radius:4px; cursor:pointer; font-weight:600;">
+          <i class="fas fa-plus"></i> Tambah Baris
+        </button>
+
+        <div style="text-align:right; margin-top:15px; padding-top:10px; border-top:2px dashed var(--border-color);">
+          <strong style="font-size:1.1rem;">Total: </strong>
+          <span id="p_total" style="font-size:1.3rem; color:var(--primary-red); font-weight:bold;">Rp 0</span>
+        </div>
+      </div>
+
+      <div style="text-align:right;">
+        <button type="button" onclick="tutupFormPembelian()" style="background:var(--bg-light); color:var(--text-dark); border:1px solid var(--border-color); padding:9px 15px; border-radius:4px; cursor:pointer; font-weight:600;">Batal</button>
+        <button type="submit" id="btnSubmitPembelian" class="btn-primary">
+          <i class="fas fa-save"></i> Simpan Pembelian
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Tabel Riwayat -->
+  <div style="overflow-x:auto;">
+    <table style="width:100%; border-collapse:collapse; text-align:left;">
+      <thead>
+        <tr style="background-color:var(--bg-light); border-bottom:2px solid var(--border-color);">
+          <th style="padding:10px;">No. PO</th>
+          <th style="padding:10px;">Tanggal</th>
+          <th style="padding:10px;">Tipe</th>
+          <th style="padding:10px;">Sales / Pemasok</th>
+          <th style="padding:10px; text-align:right;">Total</th>
+          <th style="padding:10px; text-align:center;">Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="tabelPembelian">
+        <tr><td colspan="6" style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>

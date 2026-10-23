@@ -1,0 +1,116 @@
+<div class="card">
+  <div class="flex-between mb-20" style="border-bottom:2px solid var(--border-color); padding-bottom:10px;">
+    <h2 style="color: var(--primary-blue);"><i class="fas fa-users-cog"></i> Pelaksana Servis</h2>
+  </div>
+
+  <!-- Info Mekanik Utama -->
+  <div style="background:#E3F2FD; border-left:4px solid var(--primary-blue); padding:12px 15px; border-radius:6px; margin-bottom:20px;">
+    <p style="font-size:0.85rem; color:#0D47A1; margin:0;">
+      <i class="fas fa-user-tie"></i>
+      <strong>Mekanik Utama:</strong> Sulistyo Utomo (otomatis, tidak perlu didaftarkan manual)
+    </p>
+  </div>
+
+  <!-- Form Tambah/Edit -->
+  <div style="background:#f9f9f9; padding:15px; border-radius:8px; border:1px solid var(--border-color); margin-bottom:20px;">
+    <h4 style="margin-bottom:10px;">Tambah / Edit Pelaksana</h4>
+
+    <form id="formMekanik" onsubmit="submitMekanik(event)" autocomplete="off">
+      <input type="hidden" name="mekanik_id" value="">
+
+      <!-- Baris 1: Nama, Tipe, Kompetensi, WhatsApp -->
+      <div style="display:grid; grid-template-columns:2fr 1.2fr 2fr 1.5fr; gap:10px; margin-bottom:10px;">
+        <div>
+          <label style="font-size:0.8rem; font-weight:bold;">Nama Lengkap *</label>
+          <input type="text" name="nama" required placeholder="Cth: Rama Pratama"
+                 autocomplete="off" spellcheck="false"
+                 style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+        </div>
+        <div>
+          <label style="font-size:0.8rem; font-weight:bold;">Tipe *</label>
+          <select name="tipe_personel" id="m_tipe" onchange="onTipePelaksanaChange()" required
+                  style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+            <option value="siswa">Siswa Praktik</option>
+            <option value="servis_kunjung">Servis Kunjung</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:0.8rem; font-weight:bold;">Kompetensi</label>
+          <input type="text" name="kompetensi" placeholder="Cth: Tune up, CVT"
+                 autocomplete="off" spellcheck="false"
+                 style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+        </div>
+        <div>
+          <label style="font-size:0.8rem; font-weight:bold;">WhatsApp</label>
+          <input type="tel" name="whatsapp" placeholder="Cth: 0812..."
+                 autocomplete="off"
+                 style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+        </div>
+      </div>
+
+      <!-- Baris 2: Kelas & NIS (muncul kalau Siswa) -->
+      <div id="m_kelas_nis_row" style="display:grid; grid-template-columns:1fr 1fr 3fr 100px; gap:10px; align-items:end;">
+        <div id="m_kelas_wrap">
+          <label style="font-size:0.8rem; font-weight:bold;">Kelas *</label>
+          <input type="text" name="kelas" id="m_kelas" placeholder="Cth: XI TBSM 1"
+                 style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+        </div>
+        <div id="m_nis_wrap">
+          <label style="font-size:0.8rem; font-weight:bold;">NIS *</label>
+          <input type="text" name="nis" id="m_nis" placeholder="Cth: 12345"
+                 style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+        </div>
+        <div></div>
+        <div>
+          <button type="submit" id="btnSubmitMekanik" class="btn-success" style="width:100%;">
+            <i class="fas fa-plus"></i> Simpan
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Tabel Pelaksana -->
+  <div style="overflow-x:auto;">
+    <table style="width:100%; border-collapse:collapse; text-align:left;">
+      <thead>
+        <tr style="background-color:var(--bg-light); border-bottom:2px solid var(--border-color);">
+          <th style="padding:10px; white-space:nowrap;">Nama</th>
+          <th style="padding:10px; white-space:nowrap;">Tipe</th>
+          <th style="padding:10px; white-space:nowrap;">Kelas</th>
+          <th style="padding:10px; white-space:nowrap;">NIS</th>
+          <th style="padding:10px; white-space:nowrap;">Kompetensi</th>
+          <th style="padding:10px; white-space:nowrap;">WhatsApp</th>
+          <th style="padding:10px; text-align:center; white-space:nowrap;">Status</th>
+          <th style="padding:10px; text-align:center; white-space:nowrap;">Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="tabelMekanik">
+        <tr><td colspan="8" style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Rekap Kinerja -->
+<div class="card" style="margin-top:20px;">
+  <h4 style="margin-bottom:15px;"><i class="fas fa-chart-bar"></i> Rekap Kinerja Pelaksana</h4>
+  <div style="overflow-x:auto;">
+    <table style="width:100%; border-collapse:collapse; text-align:left;">
+      <thead>
+        <tr style="background-color:var(--bg-light); border-bottom:2px solid var(--border-color);">
+          <th style="padding:10px; white-space:nowrap;">Nama</th>
+          <th style="padding:10px; white-space:nowrap;">Tipe</th>
+          <th style="padding:10px; white-space:nowrap;">Kelas</th>
+          <th style="padding:10px; text-align:center; white-space:nowrap;">Jumlah WO</th>
+          <th style="padding:10px; text-align:center; white-space:nowrap;">Total Jam</th>
+          <th style="padding:10px; text-align:center; white-space:nowrap;">Tervalidasi</th>
+          <th style="padding:10px; text-align:center; white-space:nowrap;">Perlu Perbaikan</th>
+        </tr>
+      </thead>
+      <tbody id="tabelRekapKinerja">
+        <tr><td colspan="7" style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>

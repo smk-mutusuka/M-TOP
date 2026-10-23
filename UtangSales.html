@@ -1,0 +1,78 @@
+<div class="dashboard-wrapper">
+  <div class="flex-between mb-20" style="border-bottom:2px solid var(--border-color); padding-bottom:10px;">
+    <h2 style="color: var(--primary-blue);"><i class="fas fa-hand-holding-usd"></i> Utang Sales</h2>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-bottom:15px;">Saldo Utang per Sales</h4>
+    <div style="overflow-x:auto;">
+      <table style="width:100%; border-collapse:collapse; text-align:left;">
+        <thead>
+          <tr style="background-color:var(--bg-light); border-bottom:2px solid var(--border-color);">
+            <th style="padding:10px;">Sales</th>
+            <th style="padding:10px;">Kontak</th>
+            <th style="padding:10px; text-align:right;">Saldo Utang</th>
+            <th style="padding:10px; text-align:center;">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tabelUtangSales">
+          <tr><td colspan="4" style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Panel Detail & Bayar -->
+  <div class="card" id="panelDetailUtang" style="display:none;">
+    <div class="flex-between mb-20">
+      <h4><i class="fas fa-list"></i> Riwayat: <span id="u_nama_sales">...</span></h4>
+      <button onclick="tutupDetailUtang()" class="btn-ghost">Tutup</button>
+    </div>
+
+    <div style="background:#f9f9f9; padding:15px; border-radius:8px; border:1px solid var(--border-color); margin-bottom:15px;">
+      <h5 style="margin-bottom:10px;"><i class="fas fa-money-bill-wave"></i> Bayar Utang</h5>
+      <form id="formBayarUtang" onsubmit="submitBayarUtang(event)" style="display:grid; grid-template-columns:1.5fr 1.5fr 1.5fr 100px; gap:10px; align-items:end;">
+        <input type="hidden" id="u_sales_id" name="sales_id">
+        <input type="hidden" id="u_saldo" value="0">
+        <div>
+          <label style="font-size:0.8rem; font-weight:bold;">Jumlah Bayar (Rp) *</label>
+          <input type="number" name="jumlah" id="u_jumlah" required min="1" placeholder="200000" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+        </div>
+        <div>
+          <label style="font-size:0.8rem; font-weight:bold;">Metode</label>
+          <select name="metode" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+            <option value="Tunai">Tunai</option>
+            <option value="Transfer">Transfer Bank</option>
+            <option value="QRIS">QRIS</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:0.8rem; font-weight:bold;">Referensi</label>
+          <input type="text" name="referensi" placeholder="No. bukti" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+        </div>
+        <div>
+          <button type="submit" id="btnBayarUtang" class="btn-success" style="width:100%;">
+            <i class="fas fa-check"></i> Bayar
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div style="overflow-x:auto;">
+      <table style="width:100%; border-collapse:collapse; text-align:left;">
+        <thead>
+          <tr style="background-color:var(--bg-light); border-bottom:2px solid var(--border-color);">
+            <th style="padding:10px;">Tanggal</th>
+            <th style="padding:10px;">Jenis</th>
+            <th style="padding:10px;">Keterangan</th>
+            <th style="padding:10px; text-align:right;">Jumlah</th>
+            <th style="padding:10px; text-align:right;">Saldo</th>
+          </tr>
+        </thead>
+        <tbody id="tabelRiwayatUtang">
+          <tr><td colspan="5" style="text-align:center; padding:15px; color:#999;">Belum ada data.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

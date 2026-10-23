@@ -5,95 +5,111 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>M-TOP Enduro Motor Service</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="css/styles.css">
+  <?!= include('Styles'); ?>
 </head>
 <body>
 
-  <!-- ===== LOGIN SCREEN (tampil kalau belum login) ===== -->
-  <div id="login-screen" style="display:none;">
-    <div style="min-height:100vh; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#1769AA 0%,#E31E2B 100%); padding:20px;">
-      <div style="background:#fff; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,0.3); width:100%; max-width:400px; padding:40px 32px;">
-        <div style="text-align:center; margin-bottom:30px;">
-          <img src="https://lh3.googleusercontent.com/d/1icB0dls5U3W3DhIKLPz_kN3YTxx4ovxo"
-               alt="M-TOP" style="height:80px; margin-bottom:15px; object-fit:contain;"
-               onerror="this.style.display='none'">
-          <h1 style="color:#1769AA; font-size:1.5rem; margin:0 0 5px 0; line-height:1.2;">M-TOP Enduro Motor Service</h1>
-          <p style="color:#6B7280; font-size:0.85rem; margin:0;">Servis Profesional, Transparan, dan Terpercaya</p>
-        </div>
-        <form id="formLogin" onsubmit="submitLogin(event)" autocomplete="off">
-          <div style="margin-bottom:16px;">
-            <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">
-              <i class="fas fa-user"></i> Username
-            </label>
-            <input type="text" id="login_username" required
-                   style="width:100%; padding:12px 14px; border:1px solid #E0E0E0; border-radius:6px; box-sizing:border-box;">
-          </div>
-          <div style="margin-bottom:20px;">
-            <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px;">
-              <i class="fas fa-lock"></i> Password
-            </label>
-            <input type="password" id="login_password" required
-                   style="width:100%; padding:12px 14px; border:1px solid #E0E0E0; border-radius:6px; box-sizing:border-box;">
-          </div>
-          <div id="login_error" style="display:none; background:#FFEBEE; color:#E31E2B; padding:10px 14px; border-radius:6px; font-size:0.85rem; margin-bottom:16px;"></div>
-          <button type="submit" id="btnLogin"
-                  style="width:100%; padding:14px; background:#1769AA; color:#fff; border:none; border-radius:6px; font-size:1rem; font-weight:600; cursor:pointer;">
-            <i class="fas fa-sign-in-alt"></i> Masuk
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
+  <div class="app-container">
 
-  <!-- ===== MAIN APP (tampil kalau sudah login) ===== -->
-  <div id="main-app" class="app-container" style="display:none;">
+    <!-- ==================== SIDEBAR ==================== -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
         <h2 class="brand-text">M-TOP<br><span>Enduro Motor Service</span></h2>
       </div>
+
       <ul class="nav-menu">
-        <li class="nav-item active" data-view="Dashboard" onclick="loadView('Dashboard', this)"><i class="fas fa-home"></i> <span>Dashboard</span></li>
+        <li class="nav-item active" data-view="Dashboard" onclick="loadView('Dashboard', this)">
+          <i class="fas fa-home"></i> <span>Dashboard</span>
+        </li>
+
         <li class="nav-section">LAYANAN</li>
-        <li class="nav-item" data-view="Penerimaan" onclick="loadView('Penerimaan', this)"><i class="fas fa-clipboard-list"></i> <span>Penerimaan Motor</span></li>
-        <li class="nav-item" data-view="DaftarWO" onclick="loadView('DaftarWO', this)"><i class="fas fa-tools"></i> <span>Work Order</span></li>
-        <li class="nav-item" data-view="Kasir" onclick="loadView('Kasir', this)"><i class="fas fa-cash-register"></i> <span>Kasir</span></li>
+        <li class="nav-item" data-view="Penerimaan" onclick="loadView('Penerimaan', this)">
+          <i class="fas fa-clipboard-list"></i> <span>Penerimaan Motor</span>
+        </li>
+        <li class="nav-item" data-view="DaftarWO" onclick="loadView('DaftarWO', this)">
+          <i class="fas fa-tools"></i> <span>Work Order</span>
+        </li>
+        <li class="nav-item" data-view="Kasir" onclick="loadView('Kasir', this)">
+          <i class="fas fa-cash-register"></i> <span>Kasir</span>
+        </li>
+
         <li class="nav-section">DATA MASTER</li>
-        <li class="nav-item" data-view="Pelanggan" onclick="loadView('Pelanggan', this)"><i class="fas fa-users"></i> <span>Pelanggan</span></li>
-        <li class="nav-item" data-view="Kendaraan" onclick="loadView('Kendaraan', this)"><i class="fas fa-motorcycle"></i> <span>Kendaraan</span></li>
-        <li class="nav-item" data-view="KatalogJasa" onclick="loadView('KatalogJasa', this)"><i class="fas fa-list-alt"></i> <span>Katalog Jasa</span></li>
-        <li class="nav-item" data-view="Inventori" onclick="loadView('Inventori', this)"><i class="fas fa-boxes"></i> <span>Inventori Stok</span></li>
+        <li class="nav-item" data-view="Pelanggan" onclick="loadView('Pelanggan', this)">
+          <i class="fas fa-users"></i> <span>Pelanggan</span>
+        </li>
+        <li class="nav-item" data-view="Kendaraan" onclick="loadView('Kendaraan', this)">
+          <i class="fas fa-motorcycle"></i> <span>Kendaraan</span>
+        </li>
+        <li class="nav-item" data-view="KatalogJasa" onclick="loadView('KatalogJasa', this)">
+          <i class="fas fa-list-alt"></i> <span>Katalog Jasa</span>
+        </li>
+        <li class="nav-item" data-view="Inventori" onclick="loadView('Inventori', this)">
+          <i class="fas fa-boxes"></i> <span>Inventori Stok</span>
+        </li>
+
         <li class="nav-section">TEACHING FACTORY</li>
-        <li class="nav-item" data-view="Mekanik" onclick="loadView('Mekanik', this)"><i class="fas fa-users-cog"></i> <span>Pelaksana Servis</span></li>
+        <li class="nav-item" data-view="Mekanik" onclick="loadView('Mekanik', this)">
+          <i class="fas fa-users-cog"></i> <span>Pelaksana Servis</span>
+        </li>
+
         <li class="nav-section">PEMBELIAN & KONSINYASI</li>
-        <li class="nav-item" data-view="Sales" onclick="loadView('Sales', this)"><i class="fas fa-user-tie"></i> <span>Sales</span></li>
-        <li class="nav-item" data-view="Pembelian" onclick="loadView('Pembelian', this)"><i class="fas fa-shopping-cart"></i> <span>Pembelian</span></li>
-        <li class="nav-item" data-view="UtangSales" onclick="loadView('UtangSales', this)"><i class="fas fa-hand-holding-usd"></i> <span>Utang Sales</span></li>
+        <li class="nav-item" data-view="Sales" onclick="loadView('Sales', this)">
+          <i class="fas fa-user-tie"></i> <span>Sales</span>
+        </li>
+        <li class="nav-item" data-view="Pembelian" onclick="loadView('Pembelian', this)">
+          <i class="fas fa-shopping-cart"></i> <span>Pembelian</span>
+        </li>
+        <li class="nav-item" data-view="UtangSales" onclick="loadView('UtangSales', this)">
+          <i class="fas fa-hand-holding-usd"></i> <span>Utang Sales</span>
+        </li>
+
         <li class="nav-section">KEUANGAN</li>
-        <li class="nav-item" data-view="Laporan" onclick="loadView('Laporan', this)"><i class="fas fa-file-alt"></i> <span>Laporan</span></li>
-        <li class="nav-item" data-view="Keuangan" onclick="loadView('Keuangan', this)"><i class="fas fa-chart-line"></i> <span>Keuangan</span></li>
+        <li class="nav-item" data-view="Laporan" onclick="loadView('Laporan', this)">
+          <i class="fas fa-file-alt"></i> <span>Laporan</span>
+        </li>
+        <li class="nav-item" data-view="Keuangan" onclick="loadView('Keuangan', this)">
+          <i class="fas fa-chart-line"></i> <span>Keuangan</span>
+        </li>
       </ul>
-      <div class="sidebar-footer" style="padding:10px;">
-        <p style="font-size:0.75rem; color:#999; text-align:center; margin:0 0 8px 0;" id="user-info">-</p>
-        <button onclick="doLogout()" style="width:100%; background:#FFEBEE; color:#E31E2B; border:none; padding:8px; border-radius:4px; cursor:pointer; font-weight:600;">
-          <i class="fas fa-sign-out-alt"></i> Logout
-        </button>
+
+      <div class="sidebar-footer">
+        <p style="font-size:0.75rem; color:#999; text-align:center; padding:10px;">
+          v1.0.0 &copy; M-TOP Enduro Motor Service
+        </p>
       </div>
     </aside>
 
+    <!-- ==================== MAIN CONTENT ==================== -->
     <main class="main-content">
+
       <header class="topbar">
-        <div class="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+        <div class="menu-toggle" onclick="toggleSidebar()">
+          <i class="fas fa-bars"></i>
+        </div>
         <div class="topbar-right">
-          <span class="user-profile"><i class="fas fa-user-circle"></i> <span id="topbar-user">-</span></span>
+          <span class="user-profile">
+            <i class="fas fa-user-circle"></i> Admin M-TOP
+          </span>
         </div>
       </header>
-      <div id="app-view" class="view-container"></div>
+
+      <div id="app-view" class="view-container">
+        <div style="text-align:center; padding:60px 20px; color:#1769AA;">
+          <i class="fas fa-spinner fa-spin fa-2x"></i>
+          <p style="margin-top:15px;">Memuat aplikasi...</p>
+        </div>
+      </div>
+
     </main>
   </div>
 
+  <!-- ==================== TOAST CONTAINER ==================== -->
   <div id="toast-container"></div>
+
+  <!-- ==================== MODAL CONFIRM ==================== -->
   <div id="modal-confirm" style="display:none;">
     <div class="modal-box">
       <h3><i class="fas fa-question-circle"></i> Konfirmasi</h3>
@@ -105,7 +121,6 @@
     </div>
   </div>
 
-  <script src="js/api.js"></script>
-  <script src="js/app.js"></script>
+  <?!= include('Scripts'); ?>
 </body>
 </html>

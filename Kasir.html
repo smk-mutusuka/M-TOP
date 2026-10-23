@@ -1,0 +1,75 @@
+<div class="card">
+  <h2 style="color: var(--primary-blue); margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">
+    <i class="fas fa-cash-register"></i> Kasir & Pembayaran
+  </h2>
+
+  <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+    
+    <!-- Bagian Kiri: Pencarian & Detail -->
+    <div style="flex: 1; min-width: 300px;">
+      <div style="margin-bottom: 20px;">
+        <label style="font-weight: bold; margin-bottom: 5px; display: block;">Pilih Work Order</label>
+        <select id="k_select_wo" onchange="loadDetailKasir(this.value)" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem;">
+          <option value="">-- Pilih Antrean Servis --</option>
+        </select>
+      </div>
+
+      <div id="k_panel_detail" style="display: none; background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
+        <h4 style="margin-bottom: 15px;">Rincian Tagihan</h4>
+        <p><strong>Pelanggan:</strong> <span id="k_nama">...</span></p>
+        <p><strong>No. WO:</strong> <span id="k_nowo">...</span></p>
+        <p><strong>Status:</strong> <span id="k_status">...</span></p>
+        
+        <table style="width: 100%; margin-top: 15px; border-collapse: collapse; font-size: 0.9rem;">
+          <thead>
+            <tr style="border-bottom: 1px solid #ccc;">
+              <th style="text-align: left; padding: 5px 0;">Item</th>
+              <th style="text-align: right; padding: 5px 0;">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody id="k_tabel_item">
+            <!-- Item dirender di sini -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Bagian Kanan: Panel Pembayaran -->
+    <div style="flex: 1; min-width: 300px;">
+      <div style="background: var(--primary-blue); color: white; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px; box-shadow: var(--shadow-sm);">
+        <p style="margin-bottom: 5px; font-size: 1.1rem;">Sisa Tagihan Pembayaran</p>
+        <h1 id="k_sisa_tagihan" style="font-size: 2.5rem; margin: 0;">Rp 0</h1>
+      </div>
+
+      <form id="formKasir" onsubmit="submitKasir(event)" style="background: white; padding: 20px; border-radius: 8px; border: 1px solid var(--border-color);">
+        <input type="hidden" id="k_woid">
+        <input type="hidden" id="k_sisa_num">
+        
+        <div style="margin-bottom: 15px;">
+          <label style="font-weight: bold; margin-bottom: 5px; display: block;">Metode Pembayaran</label>
+          <select id="k_metode" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+            <option value="Tunai">Tunai</option>
+            <option value="QRIS">QRIS / e-Wallet</option>
+            <option value="Transfer Bank">Transfer Bank</option>
+          </select>
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+          <label style="font-weight: bold; margin-bottom: 5px; display: block;">Jumlah Uang Dibayar (Rp)</label>
+          <input type="number" id="k_jumlah" required style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 1.2rem; font-weight: bold; color: var(--primary-blue);">
+        </div>
+
+        <button type="submit" id="btnBayar" disabled style="width: 100%; background: var(--primary-green); color: white; border: none; padding: 15px; border-radius: 4px; font-size: 1.1rem; font-weight: bold; cursor: not-allowed; opacity: 0.6;">
+          <i class="fas fa-check-circle"></i> Proses Pembayaran
+        </button>
+      </form>
+      <!-- Tombol Cetak Nota (Disembunyikan secara default) -->
+      <div id="k_area_cetak" style="display: none; margin-top: 15px;">
+        <button onclick="cetakNota()" id="btnCetakNota" style="width: 100%; background: white; color: var(--primary-blue); border: 2px solid var(--primary-blue); padding: 12px; border-radius: 4px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.2s;">
+          <i class="fas fa-print"></i> Cetak Nota
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,116 @@
+<div class="dashboard-wrapper">
+  <div class="flex-between mb-20" style="border-bottom:2px solid var(--border-color); padding-bottom:10px;">
+    <h2 style="color: var(--primary-blue);"><i class="fas fa-chart-line"></i> Keuangan & Laba Rugi</h2>
+  </div>
+
+  <!-- Kartu Ringkasan -->
+  <div class="grid-dashboard" style="margin-bottom:25px;">
+    <div class="stat-card" style="border-top:4px solid var(--primary-green);">
+      <div>
+        <p>Total Pendapatan</p>
+        <h3 id="keu-pendapatan" style="color: var(--primary-green);"><i class="fas fa-spinner fa-spin"></i></h3>
+      </div>
+      <i class="fas fa-wallet icon" style="color: var(--primary-green);"></i>
+    </div>
+
+    <div class="stat-card" style="border-top:4px solid #f39c12;">
+      <div>
+        <p>HPP <small style="color:#999; font-size:0.7rem;">(Harga Pokok)</small></p>
+        <h3 id="keu-hpp" style="color: #f39c12;"><i class="fas fa-spinner fa-spin"></i></h3>
+      </div>
+      <i class="fas fa-boxes icon" style="color: #f39c12;"></i>
+    </div>
+
+    <div class="stat-card" style="border-top:4px solid var(--primary-blue);">
+      <div>
+        <p>Laba Kotor</p>
+        <h3 id="keu-laba-kotor" style="color: var(--primary-blue);"><i class="fas fa-spinner fa-spin"></i></h3>
+      </div>
+      <i class="fas fa-coins icon" style="color: var(--primary-blue);"></i>
+    </div>
+
+    <div class="stat-card" style="border-top:4px solid var(--primary-red);">
+      <div>
+        <p>Biaya Operasional</p>
+        <h3 id="keu-pengeluaran" style="color: var(--primary-red);"><i class="fas fa-spinner fa-spin"></i></h3>
+      </div>
+      <i class="fas fa-arrow-up icon" style="color: var(--primary-red);"></i>
+    </div>
+
+    <div class="stat-card" style="border-top:4px solid var(--primary-blue);">
+      <div>
+        <p>Laba Operasional</p>
+        <h3 id="keu-laba" style="color: var(--primary-blue);"><i class="fas fa-spinner fa-spin"></i></h3>
+      </div>
+      <i class="fas fa-chart-line icon" style="color: var(--primary-blue);"></i>
+    </div>
+
+    <div class="stat-card" style="border-top:4px solid #f39c12;">
+      <div>
+        <p>Utang ke Sales</p>
+        <h3 id="keu-utang" style="color: #f39c12;"><i class="fas fa-spinner fa-spin"></i></h3>
+      </div>
+      <i class="fas fa-hand-holding-usd icon" style="color: #f39c12;"></i>
+    </div>
+  </div>
+
+  <!-- Info edukasi -->
+  <div style="background:#FFF3CD; border:1px solid #FFEEBA; border-radius:8px; padding:12px 15px; margin-bottom:20px; font-size:0.85rem; color:#856404;">
+    <i class="fas fa-info-circle"></i>
+    <strong>Info:</strong> Pembelian suku cadang dari supplier/sales <strong>tidak dicatat di sini</strong>.
+    Gunakan menu <strong>Pembelian</strong> (kategori Pembelian & Konsinyasi) supaya stok ikut bertambah dan HPP terhitung otomatis.
+    Menu ini <strong>hanya untuk biaya operasional</strong>: listrik, air, konsumsi, perlengkapan, dll.
+  </div>
+
+  <div class="card">
+    <h4 style="margin-bottom: 15px;"><i class="fas fa-receipt"></i> Catat Pengeluaran Operasional</h4>
+
+    <form id="formPengeluaran" onsubmit="submitPengeluaran(event)" style="display: grid; grid-template-columns: 1fr 2fr 1fr 140px; gap: 15px; align-items: flex-end; margin-bottom: 20px; background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
+
+      <div>
+        <label style="font-size: 0.85rem; font-weight: bold;">Kategori Biaya</label>
+        <select name="kategori" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+          <option value="Operasional (Listrik/Air)">Operasional (Listrik/Air)</option>
+          <option value="Konsumsi & Makan">Konsumsi & Makan</option>
+          <option value="Perlengkapan Bengkel">Perlengkapan Bengkel</option>
+          <option value="Gaji & Upah">Gaji & Upah</option>
+          <option value="Transportasi">Transportasi</option>
+          <option value="Lainnya">Lainnya</option>
+        </select>
+      </div>
+
+      <div>
+        <label style="font-size: 0.85rem; font-weight: bold;">Keterangan / Deskripsi</label>
+        <input type="text" name="deskripsi" required placeholder="Cth: Beli makan siang mekanik" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+      </div>
+
+      <div>
+        <label style="font-size: 0.85rem; font-weight: bold;">Jumlah (Rp)</label>
+        <input type="number" name="jumlah" required min="1" placeholder="50000" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; color: var(--primary-red);">
+      </div>
+
+      <div>
+        <button type="submit" id="btnSubmitPengeluaran" class="btn-danger" style="width: 100%;">
+          <i class="fas fa-minus-circle"></i> Catat Biaya
+        </button>
+      </div>
+    </form>
+
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; text-align: left;">
+        <thead>
+          <tr style="background-color: var(--bg-light); border-bottom: 2px solid var(--border-color);">
+            <th style="padding: 10px;">Tanggal</th>
+            <th style="padding: 10px;">Kategori</th>
+            <th style="padding: 10px;">Deskripsi</th>
+            <th style="padding: 10px; text-align: right;">Jumlah</th>
+            <th style="padding: 10px; text-align: center;">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tabelPengeluaran">
+          <tr><td colspan="5" style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-spin"></i> Memuat data...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

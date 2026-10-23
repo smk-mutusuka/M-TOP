@@ -1,0 +1,85 @@
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:2px solid var(--border-color); padding-bottom:10px;">
+    <h2 style="color: var(--primary-blue);"><i class="fas fa-motorcycle"></i> Data Kendaraan</h2>
+  </div>
+
+  <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 20px;">
+    <h4 style="margin-bottom: 10px;">Tambah / Edit Kendaraan</h4>
+    <form id="formKendaraan" onsubmit="submitKendaraan(event)" style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:10px; align-items:end;">
+      <input type="hidden" name="kendaraan_id" value="">
+
+      <div>
+        <label style="font-size:0.8rem; font-weight:bold;">Pelanggan *</label>
+        <select name="pelanggan_id" id="k_pelanggan_id" required style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+          <option value="">-- Pilih --</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:0.8rem; font-weight:bold;">Nomor Polisi *</label>
+        <input type="text" name="nomor_polisi" required placeholder="AD 1234 XY" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; text-transform:uppercase; font-family:monospace;">
+      </div>
+      <div>
+        <label style="font-size:0.8rem; font-weight:bold;">Merek</label>
+        <input type="text" name="merek" placeholder="Honda" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+      </div>
+      <div>
+        <label style="font-size:0.8rem; font-weight:bold;">Tipe</label>
+        <input type="text" name="tipe" placeholder="Vario 150" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+      </div>
+      <div>
+        <label style="font-size:0.8rem; font-weight:bold;">Tahun</label>
+        <input type="text" name="tahun" placeholder="2020" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+      </div>
+      <div>
+        <label style="font-size:0.8rem; font-weight:bold;">KM Terakhir</label>
+        <input type="number" name="kilometer_terakhir" placeholder="25000" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+      </div>
+      <div>
+        <label style="font-size:0.8rem; font-weight:bold;">Catatan</label>
+        <input type="text" name="catatan" placeholder="-" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+      </div>
+      <div>
+        <button type="submit" id="btnSubmitKendaraan" style="background-color: var(--primary-green); color:white; border:none; padding:9px 15px; border-radius:4px; cursor:pointer; font-weight:bold; width:100%;">
+          <i class="fas fa-plus"></i> Simpan
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div style="overflow-x:auto;">
+    <table style="width:100%; border-collapse:collapse; text-align:left;">
+      <thead>
+        <tr style="background-color: var(--bg-light); border-bottom:2px solid var(--border-color);">
+          <th style="padding:10px;">Nopol</th>
+          <th style="padding:10px;">Motor</th>
+          <th style="padding:10px;">Pemilik</th>
+          <th style="padding:10px; text-align:right;">KM</th>
+          <th style="padding:10px; text-align:center;">Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="tabelKendaraan">
+        <tr><td colspan="5" style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  // Load daftar pelanggan untuk dropdown saat view ini dibuka
+  (function() {
+    google.script.run
+      .withSuccessHandler(function(responseStr) {
+        const res = JSON.parse(responseStr);
+        if (res.success) {
+          const select = document.getElementById('k_pelanggan_id');
+          if (!select) return;
+          let html = '<option value="">-- Pilih --</option>';
+          res.data.forEach(function(p) {
+            html += '<option value="' + p.pelanggan_id + '">' + p.nama + ' (' + p.whatsapp + ')</option>';
+          });
+          select.innerHTML = html;
+        }
+      })
+      .getDaftarPelanggan(false);
+  })();
+</script>

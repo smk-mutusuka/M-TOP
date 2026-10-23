@@ -1,0 +1,51 @@
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:2px solid var(--border-color); padding-bottom:10px;">
+    <h2 style="color: var(--primary-blue);"><i class="fas fa-users"></i> Data Pelanggan</h2>
+  </div>
+
+  <!-- Form Tambah/Edit -->
+  <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 20px;">
+    <h4 style="margin-bottom: 10px;">Tambah / Edit Pelanggan</h4>
+    <form id="formPelanggan" onsubmit="submitPelanggan(event)" style="display:grid; grid-template-columns: 2fr 1.5fr 2fr 100px; gap:10px; align-items:end;">
+      <input type="hidden" name="pelanggan_id" value="">
+
+      <div>
+        <label style="font-size:0.8rem; font-weight:bold;">Nama Lengkap *</label>
+        <input type="text" name="nama" required placeholder="Budi Santoso" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+      </div>
+      <div>
+        <label style="font-size:0.8rem; font-weight:bold;">No. WhatsApp *</label>
+        <input type="tel" name="whatsapp" required placeholder="08123456789" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+      </div>
+      <div>
+        <label style="font-size:0.8rem; font-weight:bold;">Alamat</label>
+        <input type="text" name="alamat" placeholder="Jl. ..." style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+      </div>
+      <div>
+        <button type="submit" id="btnSubmitPelanggan" style="background-color: var(--primary-green); color:white; border:none; padding:9px 15px; border-radius:4px; cursor:pointer; font-weight:bold; width:100%;">
+          <i class="fas fa-plus"></i> Simpan
+        </button>
+      </div>
+      <input type="hidden" name="catatan" value="">
+    </form>
+  </div>
+
+  <!-- Tabel Pelanggan -->
+  <div style="overflow-x:auto;">
+    <table style="width:100%; border-collapse:collapse; text-align:left;">
+      <thead>
+        <tr style="background-color: var(--bg-light); border-bottom:2px solid var(--border-color);">
+          <th style="padding:10px;">ID</th>
+          <th style="padding:10px;">Nama</th>
+          <th style="padding:10px;">WhatsApp</th>
+          <th style="padding:10px;">Alamat</th>
+          <th style="padding:10px;">Tgl Daftar</th>
+          <th style="padding:10px; text-align:center;">Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="tabelPelanggan">
+        <tr><td colspan="6" style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>

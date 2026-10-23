@@ -1,0 +1,168 @@
+<div class="card">
+  <!-- Header -->
+  <div class="flex-between mb-20" style="border-bottom:2px solid var(--border-color); padding-bottom:15px; flex-wrap:wrap; gap:10px;">
+    <div>
+      <button onclick="loadView('DaftarWO')" class="btn-ghost" style="margin-bottom:10px;">
+        <i class="fas fa-arrow-left"></i> Kembali
+      </button>
+      <h2 style="color:var(--primary-blue);">Pengerjaan WO: <span id="pg_nowo">...</span></h2>
+    </div>
+    <div style="text-align:right;">
+      <span id="pg_status" style="background:#ccc; color:white; padding:6px 15px; border-radius:15px; font-weight:bold;">...</span>
+    </div>
+  </div>
+
+  <!-- Info WO -->
+  <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px; margin-bottom:20px;">
+    <div style="background:#f9f9f9; padding:12px; border-radius:8px; border:1px solid var(--border-color);">
+      <p style="font-size:0.75rem; color:#999; margin-bottom:3px;">PELANGGAN</p>
+      <p style="font-weight:bold; margin:0;" id="pg_pelanggan">...</p>
+    </div>
+    <div style="background:#f9f9f9; padding:12px; border-radius:8px; border:1px solid var(--border-color);">
+      <p style="font-size:0.75rem; color:#999; margin-bottom:3px;">KENDARAAN</p>
+      <p style="font-weight:bold; margin:0;" id="pg_nopol">...</p>
+    </div>
+    <div style="background:#f9f9f9; padding:12px; border-radius:8px; border:1px solid var(--border-color);">
+      <p style="font-size:0.75rem; color:#999; margin-bottom:3px;">KILOMETER</p>
+      <p style="font-weight:bold; margin:0;" id="pg_km">...</p>
+    </div>
+    <div style="background:#f9f9f9; padding:12px; border-radius:8px; border:1px solid var(--border-color);">
+      <p style="font-size:0.75rem; color:#999; margin-bottom:3px;">ESTIMASI BIAYA</p>
+      <p style="font-weight:bold; color:var(--primary-red); margin:0;" id="pg_estimasi">Rp 0</p>
+    </div>
+  </div>
+
+  <!-- Keluhan -->
+  <div style="background:#FFF3CD; padding:12px 15px; border-radius:8px; border:1px solid #FFEEBA; margin-bottom:20px;">
+    <p style="font-size:0.75rem; color:#856404; font-weight:bold; margin-bottom:5px;">KELUHAN PELANGGAN</p>
+    <p id="pg_keluhan" style="color:#856404; margin:0; line-height:1.5;">...</p>
+  </div>
+
+  <!-- Grid: Diagnosis + Persetujuan -->
+  <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-bottom:20px;">
+    <!-- Diagnosis -->
+    <div class="card" style="margin-bottom:0;">
+      <h4 style="margin-bottom:12px;"><i class="fas fa-stethoscope"></i> Diagnosis Mekanik</h4>
+      <textarea id="pg_diagnosis" rows="4" placeholder="Tuliskan hasil diagnosis..." style="width:100%; padding:10px; border:1px solid #ccc; border-radius:4px; resize:vertical;"></textarea>
+      <div style="margin-top:10px; display:flex; gap:8px;">
+        <input type="number" id="pg_estimasi_input" placeholder="Estimasi biaya (Rp)" style="flex:1; padding:8px; border:1px solid #ccc; border-radius:4px;">
+        <button onclick="simpanDiagnosis()" class="btn-primary">
+          <i class="fas fa-save"></i> Simpan
+        </button>
+      </div>
+    </div>
+
+    <!-- Persetujuan -->
+    <div class="card" style="margin-bottom:0;">
+      <h4 style="margin-bottom:12px;"><i class="fas fa-check-double"></i> Persetujuan Pelanggan</h4>
+      <p style="font-size:0.85rem; color:#666; margin-bottom:10px;">
+        Status: <span id="pg_status_setuju" class="badge badge-muted">Belum</span>
+      </p>
+      <div style="display:flex; gap:8px;">
+        <button onclick="catatPersetujuan('Disetujui')" class="btn-success" style="flex:1;">
+          <i class="fas fa-check"></i> Setujui
+        </button>
+        <button onclick="catatPersetujuan('Ditolak')" class="btn-danger" style="flex:1;">
+          <i class="fas fa-times"></i> Tolak
+        </button>
+      </div>
+      <p style="font-size:0.75rem; color:#999; margin-top:10px; margin-bottom:0;">
+        <i class="fas fa-info-circle"></i> Setelah disetujui, status WO otomatis jadi "Dalam Pengerjaan".
+      </p>
+    </div>
+  </div>
+
+  <!-- Penugasan Pelaksana -->
+  <div class="card">
+    <div class="flex-between mb-20">
+      <h4><i class="fas fa-users"></i> Pelaksana Servis</h4>
+      <button onclick="bukaFormPenugasan()" class="btn-primary" style="padding:6px 14px; font-size:0.85rem;">
+        <i class="fas fa-plus"></i> Tambah Pelaksana
+      </button>
+    </div>
+
+    <!-- Form Penugasan -->
+    <div id="pg_form_penugasan" style="display:none; background:#f9f9f9; padding:15px; border-radius:8px; margin-bottom:15px; border:1px solid var(--border-color);">
+      <div style="display:grid; grid-template-columns: 2fr 1.5fr 1.5fr 100px; gap:10px; align-items:end;">
+        <div>
+          <label style="font-size:0.8rem; font-weight:bold;">Pelaksana *</label>
+          <select id="pg_pelaksana_id" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+            <option value="">-- Pilih --</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:0.8rem; font-weight:bold;">Peran *</label>
+          <select id="pg_peran" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+            <option value="Mekanik Pelaksana">Mekanik Pelaksana</option>
+            <option value="Asisten">Asisten</option>
+            <option value="Admin/Pelayanan">Admin/Pelayanan</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:0.8rem; font-weight:bold;">Pembimbing</label>
+          <input type="text" id="pg_pembimbing_display" value="Sulistyo Utomo (Mekanik Utama)" disabled
+                 style="width:100%; padding:8px; border:1px solid #90CAF9; border-radius:4px; background:#E3F2FD; font-weight:bold; color:#0D47A1;">
+        </div>
+        <div>
+          <button onclick="simpanPenugasan()" class="btn-success" style="width:100%;">
+            <i class="fas fa-check"></i> Tambah
+          </button>
+        </div>
+      </div>
+      <p style="font-size:0.75rem; color:#666; margin-top:8px; margin-bottom:0;">
+        <i class="fas fa-info-circle"></i> Pembimbing otomatis: <strong>Sulistyo Utomo</strong> (Mekanik Utama).
+      </p>
+    </div>
+
+    <div style="overflow-x:auto;">
+      <table style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr style="background:var(--bg-light); border-bottom:2px solid var(--border-color);">
+            <th style="padding:10px; white-space:nowrap;">Nama</th>
+            <th style="padding:10px; white-space:nowrap;">Tipe</th>
+            <th style="padding:10px; white-space:nowrap;">Kelas</th>
+            <th style="padding:10px; white-space:nowrap;">Peran</th>
+            <th style="padding:10px; white-space:nowrap;">Pembimbing</th>
+            <th style="padding:10px; text-align:center; white-space:nowrap;">Validasi</th>
+            <th style="padding:10px; text-align:center; white-space:nowrap;">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="pg_tabel_penugasan">
+          <tr><td colspan="7" style="text-align:center; padding:15px; color:#999;">Belum ada pelaksana.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Checklist -->
+  <div class="card">
+    <h4 style="margin-bottom:12px;"><i class="fas fa-clipboard-check"></i> Checklist Pemeriksaan Akhir</h4>
+    <div id="pg_checklist" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:10px;">
+      <!-- Di-render dari JS -->
+    </div>
+    <div style="margin-top:15px; text-align:right;">
+      <button onclick="simpanChecklist()" class="btn-primary">
+        <i class="fas fa-save"></i> Simpan Checklist
+      </button>
+    </div>
+  </div>
+
+  <!-- Aksi Akhir -->
+  <div class="card">
+    <h4 style="margin-bottom:12px;"><i class="fas fa-flag-checkered"></i> Selesaikan Pengerjaan</h4>
+    <p style="font-size:0.85rem; color:#666; margin-bottom:12px;">
+      Setelah semua pekerjaan selesai & checklist terisi, ajukan WO untuk pemeriksaan akhir.
+    </p>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <button onclick="ubahStatusWO('Pemeriksaan Akhir')" class="btn-primary">
+        <i class="fas fa-search"></i> Ajukan Pemeriksaan Akhir
+      </button>
+      <button onclick="ubahStatusWO('Siap Diambil')" class="btn-success">
+        <i class="fas fa-check-circle"></i> Siap Diambil
+      </button>
+      <button onclick="ubahStatusWO('Menunggu Suku Cadang')" class="btn-warning">
+        <i class="fas fa-box-open"></i> Menunggu Suku Cadang
+      </button>
+    </div>
+  </div>
+</div>

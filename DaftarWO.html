@@ -1,0 +1,26 @@
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:2px solid var(--border-color); padding-bottom:10px;">
+    <h2 style="color: var(--primary-blue);"><i class="fas fa-tools"></i> Daftar Work Order</h2>
+    <button onclick="loadView('Penerimaan')" style="background-color: var(--primary-blue); color:white; border:none; padding:8px 15px; border-radius:4px; cursor:pointer;">
+      + Tambah Servis
+    </button>
+  </div>
+
+  <div style="overflow-x:auto;">
+    <table style="width:100%; border-collapse:collapse; text-align:left;">
+      <thead>
+        <tr style="background-color: var(--bg-light); border-bottom:2px solid var(--border-color);">
+          <th style="padding:12px; font-weight:600;">No. WO</th>
+          <th style="padding:12px; font-weight:600;">Tanggal</th>
+          <th style="padding:12px; font-weight:600;">Pelanggan</th>
+          <th style="padding:12px; font-weight:600;">Nopol</th>
+          <th style="padding:12px; font-weight:600;">Status</th>
+          <th style="padding:12px; font-weight:600;">Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="tabelWO">
+        <tr><td colspan="6" style="text-align:center; padding:20px; color:#666;"><i class="fas fa-spinner fa-spin"></i> Memuat data...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>

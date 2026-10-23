@@ -1,0 +1,116 @@
+<div class="card">
+  <h2 style="color: var(--primary-blue); margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">
+    <i class="fas fa-clipboard-list"></i> Form Penerimaan Servis
+  </h2>
+
+  <form id="formPenerimaan" onsubmit="submitPenerimaan(event)">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+
+      <!-- Data Pelanggan -->
+      <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
+        <h4 style="margin-bottom: 15px; color: var(--text-dark); border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+          <i class="fas fa-user" style="color: var(--primary-blue);"></i> Data Pelanggan
+        </h4>
+
+        <div style="margin-bottom: 15px;">
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px;">
+            Nama Lengkap <span style="color: var(--primary-red);">*</span>
+          </label>
+          <input type="text" name="nama" required placeholder="Cth: Budi Santoso"
+                 style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.95rem;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px;">
+            No. WhatsApp <span style="color: var(--primary-red);">*</span>
+          </label>
+          <input type="tel" name="whatsapp" required placeholder="Cth: 08123456789"
+                 pattern="[0-9]{9,15}"
+                 title="Masukkan 9-15 digit angka tanpa spasi/tanda baca"
+                 style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.95rem;">
+          <small style="color: #999; font-size: 0.75rem;">Gunakan angka, tanpa spasi atau tanda baca.</small>
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px;">
+            Alamat <span style="color: #999; font-weight: 400;">(opsional)</span>
+          </label>
+          <input type="text" name="alamat" placeholder="Cth: Jl. Slamet Riyadi No. 10, Surakarta"
+                 style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.95rem;">
+        </div>
+      </div>
+
+      <!-- Data Kendaraan -->
+      <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
+        <h4 style="margin-bottom: 15px; color: var(--text-dark); border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+          <i class="fas fa-motorcycle" style="color: var(--primary-blue);"></i> Data Kendaraan
+        </h4>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+          <div>
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px;">
+              Nomor Polisi <span style="color: var(--primary-red);">*</span>
+            </label>
+            <input type="text" name="nopol" required placeholder="AD 1234 XY"
+                   style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; text-transform: uppercase; font-family: monospace; font-weight: bold;">
+          </div>
+          <div>
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px;">
+              Kilometer Masuk <span style="color: var(--primary-red);">*</span>
+            </label>
+            <input type="number" name="kilometer" required min="0" placeholder="Cth: 25000"
+                   style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div>
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px;">
+              Merek
+            </label>
+            <input type="text" name="merek" placeholder="Honda / Yamaha / Suzuki"
+                   style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+          </div>
+          <div>
+            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px;">
+              Tipe / Model
+            </label>
+            <input type="text" name="tipe" placeholder="Cth: Vario 150"
+                   style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Keluhan -->
+    <div style="margin-top: 20px; background: #FFF3CD; padding: 15px; border-radius: 8px; border: 1px solid #FFEEBA;">
+      <h4 style="margin-bottom: 15px; color: #856404;">
+        <i class="fas fa-exclamation-triangle"></i> Keluhan / Permintaan Pelanggan
+      </h4>
+      <textarea name="keluhan" required rows="4"
+                placeholder="Tuliskan keluhan atau permintaan pelanggan di sini. Contoh: Motor bergetar saat jalan, minta servis CVT dan ganti oli."
+                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; resize: vertical; font-family: inherit; font-size: 0.95rem;"></textarea>
+    </div>
+
+    <!-- Catatan Tambahan -->
+    <div style="margin-top: 15px; background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
+      <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px;">
+        Catatan Tambahan <span style="color: #999; font-weight: 400;">(opsional)</span>
+      </label>
+      <input type="text" name="catatan" placeholder="Cth: Pelanggan minta dikabari via WA sebelum dikerjakan"
+             style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.95rem;">
+    </div>
+
+    <!-- Tombol Aksi -->
+    <div style="margin-top: 25px; display: flex; justify-content: flex-end; gap: 10px;">
+      <button type="button" onclick="loadView('DaftarWO')"
+              style="background: var(--bg-light); color: var(--text-dark); border: 1px solid var(--border-color); padding: 12px 24px; font-size: 1rem; font-weight: 600; border-radius: 4px; cursor: pointer;">
+        <i class="fas fa-times"></i> Batal
+      </button>
+      <button type="submit" id="btnSubmit"
+              style="background-color: var(--primary-red); color: white; border: none; padding: 12px 24px; font-size: 1rem; font-weight: 600; border-radius: 4px; cursor: pointer; transition: 0.2s;">
+        <i class="fas fa-save"></i> Buat Work Order
+      </button>
+    </div>
+  </form>
+</div>

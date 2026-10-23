@@ -1,0 +1,147 @@
+<div class="card">
+  <!-- Header -->
+  <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid var(--border-color); padding-bottom:15px; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
+    <div>
+      <button onclick="loadView('DaftarWO')" style="background: var(--bg-light); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-bottom: 10px; color: var(--text-dark);">
+        <i class="fas fa-arrow-left"></i> Kembali ke Antrean
+      </button>
+      <h2 style="color: var(--primary-blue); margin-top: 5px;">Detail WO: <span id="d-nowo">...</span></h2>
+    </div>
+    <div style="text-align:right;">
+      <span id="d-status" style="background:#ccc; color:white; padding:6px 15px; border-radius:15px; font-weight:bold; font-size:0.9rem;">...</span>
+      <p style="font-size:0.8rem; color:#666; margin-top:5px;" id="d-tanggal">...</p>
+    </div>
+  </div>
+
+  <!-- Info Pelanggan & Kendaraan -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 20px;">
+    <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
+      <h4 style="color: var(--text-dark); margin-bottom: 10px;"><i class="fas fa-user"></i> Info Pelanggan</h4>
+      <p style="margin-bottom: 5px;"><strong>Nama:</strong> <span id="d-nama">...</span></p>
+      <p><strong>WhatsApp:</strong> <span id="d-wa">...</span></p>
+
+      <!-- Grup Tombol WA (muncul kalau status Selesai / Siap Diambil) -->
+      <div id="wa_button_group" style="display:none; margin-top:15px;">
+        <button type="button" id="btnNotifWA" onclick="kirimNotifSelesai()"
+          style="background:#25D366; color:white; border:none; padding:9px 12px; border-radius:4px; font-weight:bold; cursor:pointer; width:100%; margin-bottom:6px;">
+          <i class="fab fa-whatsapp"></i> Kabari Selesai
+        </button>
+        <button type="button" id="btnReminderWA" onclick="kirimReminderServis()"
+          style="background:#f39c12; color:white; border:none; padding:9px 12px; border-radius:4px; font-weight:bold; cursor:pointer; width:100%; margin-bottom:6px;">
+          <i class="fab fa-whatsapp"></i> Reminder Servis
+        </button>
+        <button type="button" onclick="bukaRiwayatWA()"
+          style="background:white; color:var(--primary-blue); border:1px solid var(--primary-blue); padding:8px 12px; border-radius:4px; font-weight:bold; cursor:pointer; width:100%;">
+          <i class="fas fa-history"></i> Riwayat WA
+        </button>
+      </div>
+    </div>
+    <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
+      <h4 style="color: var(--text-dark); margin-bottom: 10px;"><i class="fas fa-motorcycle"></i> Info Kendaraan</h4>
+      <p style="margin-bottom: 5px;"><strong>Nopol:</strong> <span id="d-nopol" style="font-family:monospace; font-weight:bold; font-size:1.1rem;">...</span></p>
+      <p style="margin-bottom: 5px;"><strong>Motor:</strong> <span id="d-motor">...</span></p>
+      <p><strong>Kilometer:</strong> <span id="d-km">...</span> KM</p>
+    </div>
+  </div>
+
+  <!-- Keluhan -->
+  <div style="background: #FFF3CD; padding: 15px; border-radius: 8px; border: 1px solid #FFEEBA; margin-bottom: 25px;">
+    <h4 style="color: #856404; margin-bottom: 10px;"><i class="fas fa-exclamation-triangle"></i> Keluhan / Permintaan Pelanggan</h4>
+    <p id="d-keluhan" style="color: #856404; font-size: 0.95rem; line-height: 1.5;">...</p>
+  </div>
+
+  <!-- Panel Riwayat WA (hidden, toggle via tombol) -->
+  <div id="wa_riwayat_panel" style="display:none; margin-bottom:25px; padding:15px; background:#F3F5F7; border-radius:8px; border:1px solid var(--border-color);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <h4 style="margin:0; color:var(--primary-blue); font-size:0.95rem;">
+        <i class="fas fa-history"></i> Riwayat WhatsApp
+      </h4>
+      <button type="button" onclick="document.getElementById('wa_riwayat_panel').style.display='none'"
+        style="background:none; border:none; font-size:1.3rem; cursor:pointer; color:#999; padding:0;">&times;</button>
+    </div>
+    <div id="wa_riwayat_content">
+      <p style="color:#999; font-size:0.85rem; text-align:center; padding:10px;">Memuat...</p>
+    </div>
+  </div>
+
+  <!-- Rincian Pekerjaan & Suku Cadang -->
+  <div style="border-top: 2px dashed var(--border-color); padding-top: 20px; margin-bottom: 20px;">
+    <h4 style="color: var(--text-dark); margin-bottom: 15px;"><i class="fas fa-list-check"></i> Rincian Jasa & Suku Cadang</h4>
+
+    <!-- Form Tambah Item -->
+    <form id="formTambahItem" onsubmit="tambahItemWO(event)" style="display:grid; grid-template-columns: 120px 1fr 80px 140px 100px; gap:10px; margin-bottom:15px; background:#f9f9f9; padding:15px; border-radius:8px; border:1px solid var(--border-color); align-items:end;">
+      <input type="hidden" id="item_woid">
+      <input type="hidden" id="item_barang_id">
+      <input type="hidden" id="item_jasa_id">
+
+      <div>
+        <label style="font-size:0.8rem; font-weight:bold;">Jenis</label>
+        <select id="item_jenis" onchange="onJenisItemChange()" required style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+          <option value="Jasa">Jasa</option>
+          <option value="Sparepart">Suku Cadang</option>
+        </select>
+      </div>
+
+      <div>
+        <label style="font-size:0.8rem; font-weight:bold;">Pilih Item</label>
+        <select id="item_pilihan" onchange="onItemPilihanChange()" required style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+          <option value="">-- Pilih --</option>
+        </select>
+      </div>
+
+      <div>
+        <label style="font-size:0.8rem; font-weight:bold;">Qty</label>
+        <input type="number" id="item_qty" required value="1" min="1" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+      </div>
+
+      <div>
+        <label style="font-size:0.8rem; font-weight:bold;">Harga Satuan</label>
+        <input type="number" id="item_harga" required placeholder="0" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+      </div>
+
+      <div>
+        <button type="submit" id="btnTambahItem" style="background: var(--primary-blue); color: white; border: none; padding: 9px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; width:100%;">
+          + Tambah
+        </button>
+      </div>
+    </form>
+
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; text-align: left; margin-bottom: 10px;">
+        <thead>
+          <tr style="background-color: var(--bg-light); border-bottom: 2px solid var(--border-color);">
+            <th style="padding: 10px;">Jenis</th>
+            <th style="padding: 10px;">Deskripsi</th>
+            <th style="padding: 10px; text-align: center;">Qty</th>
+            <th style="padding: 10px; text-align: right;">Harga</th>
+            <th style="padding: 10px; text-align: right;">Subtotal</th>
+            <th style="padding: 10px; text-align: center;">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tabelItemWO">
+          <tr><td colspan="6" style="text-align:center; padding:15px; color:#999;">Belum ada rincian.</td></tr>
+        </tbody>
+        <tfoot>
+          <tr style="border-top: 2px solid var(--border-color); background: #f9f9f9;">
+            <th colspan="4" style="padding: 10px; text-align: right;">Total Estimasi:</th>
+            <th id="totalEstimasi" style="padding: 10px; text-align: right; color: var(--primary-red); font-size: 1.1rem;">Rp 0</th>
+            <th></th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
+  <!-- Update Status -->
+  <div style="border-top: 2px dashed var(--border-color); padding-top: 20px;">
+    <h4 style="margin-bottom: 15px;">Update Status Pengerjaan</h4>
+    <input type="hidden" id="d-woid">
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+      <button onclick="ubahStatusWO('Dalam Pemeriksaan')" style="background: #f39c12; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold;"><i class="fas fa-search"></i> Dalam Pemeriksaan</button>
+      <button onclick="ubahStatusWO('Dalam Pengerjaan')" style="background: var(--primary-blue); color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold;"><i class="fas fa-wrench"></i> Kerjakan</button>
+      <button onclick="ubahStatusWO('Menunggu Suku Cadang')" style="background: #f39c12; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold;"><i class="fas fa-box-open"></i> Menunggu Suku Cadang</button>
+      <button onclick="ubahStatusWO('Siap Diambil')" style="background: var(--primary-green); color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold;"><i class="fas fa-check-circle"></i> Siap Diambil</button>
+      <button onclick="ubahStatusWO('Selesai')" style="background: var(--primary-green); color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold;"><i class="fas fa-flag-checkered"></i> Selesai (Diserahkan)</button>
+    </div>
+  </div>
+</div>

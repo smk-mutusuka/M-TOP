@@ -1,0 +1,106 @@
+<div style="min-height:100vh; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, #1769AA 0%, #E31E2B 100%); padding:20px;">
+  <div style="background:#fff; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,0.3); width:100%; max-width:400px; padding:40px 32px;">
+    
+    <!-- Header -->
+    <div style="text-align:center; margin-bottom:30px;">
+      <img src="https://drive.google.com/uc?export=view&id=1icB0dls5U3W3DhIKLPz_kN3YTxx4ovxo" 
+           alt="M-TOP Logo" 
+           style="height:80px; margin-bottom:15px; object-fit:contain;"
+           onerror="this.style.display='none'">
+      <h1 style="color:#1769AA; font-size:1.5rem; margin:0 0 5px 0; line-height:1.2;">M-TOP Enduro Motor Service</h1>
+      <p style="color:#6B7280; font-size:0.85rem; margin:0;">Servis Profesional, Transparan, dan Terpercaya</p>
+    </div>
+
+    <!-- Form -->
+    <form id="formLogin" onsubmit="submitLogin(event)" autocomplete="off">
+      <div style="margin-bottom:16px;">
+        <label style="display:block; font-size:0.85rem; font-weight:600; color:#263238; margin-bottom:6px;">
+          <i class="fas fa-user"></i> Username
+        </label>
+        <input type="text" id="login_username" name="username" autocomplete="off" required
+               style="width:100%; padding:12px 14px; border:1px solid #E0E0E0; border-radius:6px; font-size:0.95rem; outline:none; box-sizing:border-box; transition:border 0.2s;"
+               onfocus="this.style.borderColor='#1769AA'" onblur="this.style.borderColor='#E0E0E0'"
+               placeholder="Masukkan username">
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <label style="display:block; font-size:0.85rem; font-weight:600; color:#263238; margin-bottom:6px;">
+          <i class="fas fa-lock"></i> Password
+        </label>
+        <input type="password" id="login_password" name="password" autocomplete="new-password" required
+               style="width:100%; padding:12px 14px; border:1px solid #E0E0E0; border-radius:6px; font-size:0.95rem; outline:none; box-sizing:border-box; transition:border 0.2s;"
+               onfocus="this.style.borderColor='#1769AA'" onblur="this.style.borderColor='#E0E0E0'"
+               placeholder="Masukkan password">
+      </div>
+
+      <div id="login_error" style="display:none; background:#FFEBEE; color:#E31E2B; padding:10px 14px; border-radius:6px; font-size:0.85rem; margin-bottom:16px;"></div>
+
+      <button type="submit" id="btnLogin"
+              style="width:100%; padding:14px; background:#1769AA; color:#fff; border:none; border-radius:6px; font-size:1rem; font-weight:600; cursor:pointer; transition:background 0.2s;"
+              onmouseover="this.style.background='#0d4a7a'" onmouseout="this.style.background='#1769AA'">
+        <i class="fas fa-sign-in-alt"></i> Masuk
+      </button>
+    </form>
+
+    <!-- Footer -->
+    <p style="text-align:center; color:#999; font-size:0.75rem; margin-top:24px;">
+      &copy; 2026 M-TOP Enduro Motor Service<br>
+      SMK Muhammadiyah 1 Surakarta
+    </p>
+  </div>
+</div>
+
+<script>
+function submitLogin(event) {
+  event.preventDefault();
+  const username = document.getElementById('login_username').value.trim();
+  const password = document.getElementById('login_password').value;
+  const btn = document.getElementById('btnLogin');
+  const errBox = document.getElementById('login_error');
+
+  errBox.style.display = 'none';
+
+  if (!username || !password) {
+    errBox.innerText = 'Username dan password wajib diisi.';
+    errBox.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+
+  google.script.run
+    .withSuccessHandler(function(resStr) {
+      try {
+        const res = JSON.parse(resStr);
+        if (!res.success) {
+          errBox.innerText = res.message;
+          errBox.style.display = 'block';
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk';
+          return;
+        }
+
+        try {
+          localStorage.setItem('mtop_token', res.data.token);
+          localStorage.setItem('mtop_user', JSON.stringify(res.data.user));
+        } catch (e) {}
+
+        const baseUrl = window.location.href.split('?')[0];
+        window.top.location.href = baseUrl + '?token=' + encodeURIComponent(res.data.token);
+      } catch (e) {
+        errBox.innerText = 'Parse error: ' + e.message;
+        errBox.style.display = 'block';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk';
+      }
+    })
+    .withFailureHandler(function(error) {
+      errBox.innerText = 'Error: ' + error.message;
+      errBox.style.display = 'block';
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk';
+    })
+    .loginUser(username, password);
+}
+</script>
