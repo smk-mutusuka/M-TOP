@@ -29,10 +29,54 @@
 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 20px;">
   <button type="button" class="role-btn active" onclick="switchLoginRole('admin', this)" style="width: 100%; padding: 10px 0; border-radius: 6px; border: 1px solid #1769AA; background: #1769AA; color: white; cursor: pointer; font-weight: 600; display: flex !important; justify-content: center !important; align-items: center !important;">Admin</button>
   <button type="button" class="role-btn" onclick="switchLoginRole('mekanik', this)" style="width: 100%; padding: 10px 0; border-radius: 6px; border: 1px solid #ddd; background: white; color: #333; cursor: pointer; font-weight: 600; display: flex !important; justify-content: center !important; align-items: center !important;">Mekanik</button>
-  
   <button type="button" class="role-btn" onclick="switchLoginRole('pelanggan', this)" style="width: 100%; padding: 10px 0; border-radius: 6px; border: 1px solid #ddd; background: white; color: #333; cursor: pointer; font-weight: 600; display: flex !important; justify-content: center !important; align-items: center !important;">Pelanggan</button>
 </div>
 
+  <!-- MODAL DAFTAR PELANGGAN BARU -->
+  <div id="modal-daftar-pelanggan" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:10000; align-items:center; justify-content:center; padding:20px;">
+    <div style="background:#fff; border-radius:12px; width:100%; max-width:400px; padding:24px; box-shadow:0 10px 40px rgba(0,0,0,0.2); max-height:90vh; overflow-y:auto;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">
+        <h3 style="color:var(--primary-blue); margin:0;">Pendaftaran & Antrean</h3>
+        <button onclick="document.getElementById('modal-daftar-pelanggan').style.display='none'" style="background:none; border:none; font-size:1.5rem; cursor:pointer; color:#999;">&times;</button>
+      </div>
+      
+      <form id="formDaftarPelanggan" onsubmit="submitDaftarPelanggan(event)">
+        <div style="margin-bottom:12px;">
+          <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:4px;">Nama Lengkap *</label>
+          <input type="text" id="d_nama" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:4px;">
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:4px;">Nomor WhatsApp *</label>
+          <input type="tel" id="d_wa" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:4px;" placeholder="0812...">
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+          <div>
+            <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:4px;">Nopol *</label>
+            <input type="text" id="d_nopol" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:4px; text-transform:uppercase;">
+          </div>
+          <div>
+            <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:4px;">Kilometer *</label>
+            <input type="number" id="d_km" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:4px;" placeholder="25000">
+          </div>
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:4px;">Merek / Tipe Motor</label>
+          <input type="text" id="d_motor" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:4px;" placeholder="Honda Vario 150">
+        </div>
+        <div style="margin-bottom:15px;">
+          <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:4px;">Keluhan / Permintaan *</label>
+          <textarea id="d_keluhan" required rows="3" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:4px;" placeholder="Cth: Servis CVT dan ganti oli"></textarea>
+        </div>
+        
+        <div id="d_error" style="display:none; background:#FFEBEE; color:#E31E2B; padding:10px; border-radius:4px; font-size:0.85rem; margin-bottom:15px;"></div>
+        
+        <button type="submit" id="btnSubmitDaftar" style="width:100%; background:var(--primary-green); color:white; border:none; padding:12px; border-radius:6px; font-weight:bold; font-size:1rem; cursor:pointer;">
+          Daftar & Masuk Antrean
+        </button>
+      </form>
+    </div>
+  </div>
+  
         <form id="formLogin" onsubmit="submitLogin(event)" autocomplete="off">
           <input type="hidden" id="login_role" value="admin">
           
