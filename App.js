@@ -3123,3 +3123,106 @@ async function submitLogin(event) {
     btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk';
   }
 }
+
+// ==========================================
+// 22. MODUL PORTAL PELANGGAN
+// ==========================================
+function initPortalPelanggan() {
+  const tbody = document.getElementById('tabelPortalPelanggan');
+  if (!tbody) return;
+
+  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-spin"></i> Memuat data...</td></tr>';
+
+  google.script.run
+    .withSuccessHandler(function(responseStr) {
+      const res = JSON.parse(responseStr);
+      if (!res.success) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px; color:red;">' + esc(res.message) + '</td></tr>';
+        return;
+      }
+      
+      if (res.data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px; color:#999;">Belum ada riwayat servis.</td></tr>';
+        return;
+      }
+
+      let html = '';
+      res.data.forEach(function(wo) {
+        let badgeColor = wo.status === 'Selesai' ? 'var(--primary-green)' : (wo.status === 'Menunggu Persetujuan' ? '#f39c12' : 'var(--primary-blue)');
+        
+        // Tombol aksi
+        let btnAksi = '<span style="color:#999; font-size:0.8rem;">-</span>';
+        if (wo.status === 'Menunggu Persetujuan') {
+          btnAksi = '<button onclick="bukaPersetujuan(\'' + wo.wo_id + '\')" style="background:var(--primary-green); color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-weight:bold;">Review Biaya</button>';
+        } else {
+          btnAksi = '<button onclick="lihatDetailPelanggan(\'' + wo.wo_id + '\')" style="background:white; border:1px solid var(--primary-blue); color:var(--primary-blue); padding:6px 12px; border-radius:4px; cursor:pointer;">Detail</button>';
+        }
+
+        html += '<tr style="border-bottom:1px solid #eee;">' +
+          '<td style="padding:10px; font-weight:bold; color:var(--primary-blue);">' + esc(wo.nomor_wo) + '</td>' +
+          '<td style="padding:10px;">' + esc(String(wo.tanggal).substring(0,10)) + '</td>' +
+          '<td style="padding:10px;">' + esc(wo.nopol) + '</td>' +
+          '<td style="padding:10px;">' + esc(wo.keluhan) + '</td>' +
+          '<td style="padding:10px;"><span style="background:' + badgeColor + '; color:white; padding:3px 8px; border-radius:12px; font-size:0.75rem;">' + esc(wo.status) + '</span></td>' +
+          '<td style="padding:10px; text-align:center;">' + btnAksi + '</td>' +
+        '</tr>';
+      });
+      tbody.innerHTML = html;
+    })
+    .getPortalPelanggan(); // Panggil fungsi backend
+}
+
+function bukaPersetujuan(woId) {
+  // Panggil detail tagihan
+  google.script.run
+    .withSuccessHandler(function(resStr) {
+      const res = JSON.parse(resStr);
+      if (!res.success) { showToast(res.message, 'error'); return; }
+      const w = res.data;
+
+      let itemsHtml = '';
+      w.items.forEach(it => {
+        itemsHtml += '<tr><td style="padding:5px;">' + esc(it.deskripsi) + '</td><td style="text-align:center;">' + it.qty + '</td><td style="text-align:right;">' + formatRupiah(it.subtotal) + '</td></tr>';
+      });
+
+      const html = `
+        <p><strong>No. WO:</strong> ${w.nomor_wo}</p>
+        <p><strong>Keluhan:</strong> ${w.keluhan || '-'}</p>
+        <table style="width:100%; border-collapse:collapse; margin:15px 0;">
+          <thead><tr style="background:#f3f5f7;"><th style="padding:8px; text-align:left;">Kerusakan / Perbaikan</th><th style="padding:8px; text-align:center;">Qty</th><th style="padding:8px; text-align:right;">Biaya</th></tr></thead>
+          <tbody>${itemsHtml}</tbody>
+          <tfoot><tr><th colspan="2" style="padding:8px; text-align:right;">Estimasi Total:</th><th style="padding:8px; text-align:right; color:var(--primary-red);">${formatRupiah(w.total_tagihan)}</th></tr></tfoot>
+        </table>
+        <div style="background:#FFF3CD; padding:10px; border-radius:6px; font-size:0.85rem; margin-bottom:15px;">
+          <i class="fas fa-info-circle"></i> Silakan periksa rincian perbaikan dan biaya di atas.
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button onclick="aksiPersetujuan('${woId}', 'Disetujui')" style="flex:1; background:var(--primary-green); color:white; border:none; padding:10px; border-radius:4px; cursor:pointer; font-weight:bold;">Setujui Perbaikan</button>
+          <button onclick="aksiPersetujuan('${woId}', 'Ditolak')" style="flex:1; background:var(--primary-red); color:white; border:none; padding:10px; border-radius:4px; cursor:pointer; font-weight:bold;">Tolak / Tunda</button>
+        </div>
+      `;
+      showModalCustom('Persetujuan Perbaikan', html);
+    })
+    .getDetailTagihan(woId); // Gunakan fungsi yang sudah ada di backend
+}
+
+function aksiPersetujuan(woId, status) {
+  showConfirm('Anda yakin ingin ' + (status === 'Disetujui' ? 'Menyetujui' : 'Menolak') + ' perbaikan ini?', function() {
+    google.script.run
+      .withSuccessHandler(function(resStr) {
+        const res = JSON.parse(resStr);
+        if (res.success) {
+          showToast(res.message, 'success');
+          document.getElementById('modal-custom').style.display = 'none'; // Tutup modal
+          initPortalPelanggan(); // Refresh tabel
+        } else {
+          showToast('Gagal: ' + res.message, 'error');
+        }
+      })
+      .catatPersetujuanPelanggan({ wo_id: woId, persetujuan: status });
+  });
+}
+
+function lihatDetailPelanggan(woId) {
+  showToast('Fitur detail sedang disiapkan. Cek status berkala.', 'info');
+}
