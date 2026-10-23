@@ -3099,9 +3099,19 @@ async function submitLogin(event) {
       if (!wa) throw new Error('Nomor WA wajib diisi.');
       res = await apiCall('loginPelanggan', { whatsapp: wa });
     } else {
-      const username = document.getElementById('login_username').value.trim();
-      const password = document.getElementById('login_password').value;
-      if (!username || !password) throw new Error('Username dan password wajib diisi.');
+      // Trik paksa ambil value (kebal autofill)
+      const elUser = document.getElementById('login_username');
+      const elPass = document.getElementById('login_password');
+      
+      const username = elUser ? elUser.value.trim() : '';
+      const password = elPass ? elPass.value : ''; // Password jangan di-trim
+
+      if (!username || !password) {
+        errBox.innerText = 'Username dan password tidak boleh kosong.';
+        errBox.style.display = 'block';
+        return; // Hentikan eksekusi
+      }
+      
       res = await apiCall('loginUser', { username, password });
     }
 
