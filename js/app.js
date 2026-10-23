@@ -3268,3 +3268,26 @@ window.addEventListener('DOMContentLoaded', async function() {
     clearSession(); 
   }
 });
+// ==========================================
+// 24. FUNGSI LOGOUT
+// ==========================================
+async function doLogout() {
+  showConfirm('Apakah Anda yakin ingin keluar dari aplikasi?', async function() {
+    try {
+      // 1. Coba hapus session di backend (GAS)
+      await apiCall('logoutUser', {});
+    } catch (e) {
+      console.log('Gagal menghapus session di server, lanjut logout lokal.');
+    } finally {
+      // 2. Hapus token di browser & sembunyikan aplikasi
+      clearSession(); // Fungsi ini ada di api.js
+      showLoginScreen(); // Fungsi ini ada di app.js
+      
+      // 3. Bersihkan form login biar ga nyangkut
+      const formLogin = document.getElementById('formLogin');
+      if (formLogin) formLogin.reset();
+      
+      showToast('Anda telah berhasil logout.', 'success');
+    }
+  });
+}
